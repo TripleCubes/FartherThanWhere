@@ -18,8 +18,8 @@ ChunkLoader::ChunkLoader() {
     terrainHeightFractal->SetSource(terrainHeightSimplex);
     terrainHeightFractal->SetOctaveCount(1);
 
-    for (int x = -2; x <= 2; x++) {
-        for (int z = -2; z <= 2; z++) {
+    for (int x = -4; x <= 4; x++) {
+        for (int z = -4; z <= 4; z++) {
             for (int y = -1; y <= 1; y++) {
                 loadChunk(IntPos(x, y, z));
             }

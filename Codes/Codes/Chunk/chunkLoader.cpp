@@ -2,6 +2,9 @@
 
 #include <Codes/print.h>
 
+//
+#include <vector>
+
 std::size_t ChunkLoader::IntPosHash::operator () (const IntPos &pos) const {
     std::size_t hash1 = std::hash<int>{}(pos.x);
     std::size_t hash2 = std::hash<int>{}(pos.y);
@@ -10,14 +13,83 @@ std::size_t ChunkLoader::IntPosHash::operator () (const IntPos &pos) const {
 }
 
 ChunkLoader::ChunkLoader() {
-    // for (int x = -3; x <= 3; x++) {
-    //     for (int z = -3; z <= 3; z++) {
-    //         Chunk chunk;
-    //         chunk.updateMesh();
-    //         chunks.insert(std::make_pair(IntPos(x, 0, z), chunk));
-    //     }
-    // }
+    auto terrainHeightSimplex = FastNoise::New<FastNoise::OpenSimplex2S>();
+    terrainHeightFractal = FastNoise::New<FastNoise::FractalFBm>();
+    terrainHeightFractal->SetSource(terrainHeightSimplex);
+    terrainHeightFractal->SetOctaveCount(1);
+
+    for (int x = -2; x <= 2; x++) {
+        for (int z = -2; z <= 2; z++) {
+            for (int y = -1; y <= 1; y++) {
+                loadChunk(IntPos(x, y, z));
+            }
+        }
+    }
+}
+
+bool ChunkLoader::chunkLoaded(IntPos chunkPos) const {
+    return chunks.find(chunkPos) != chunks.end();
+}
+
+void ChunkLoader::loadChunk(IntPos chunkPos) {
+    auto getTerrainHeightIndex = [](int x, int z) {
+        return z*CHUNK_WIDTH + x;
+    };
+
     std::unique_ptr<Chunk> chunkPtr = std::make_unique<Chunk>();
-    chunkPtr->updateMesh();
-    chunks.insert(std::make_pair(IntPos(0, 0, 0), std::move(chunkPtr)));
+    
+    std::vector<float> terrainHeights(CHUNK_WIDTH*CHUNK_WIDTH);
+    terrainHeightFractal->GenUniformGrid2D(terrainHeights.data(), 
+                                            chunkPos.x*CHUNK_WIDTH, chunkPos.z*CHUNK_WIDTH, 
+                                            CHUNK_WIDTH, CHUNK_WIDTH, 0.002f, 1);
+
+    for (std::size_t i = 0; i < CHUNK_VOLUME; i++) {
+        IntPos blockPos = Chunk::indexToPos(i);
+        float terrainHeight = terrainHeights[getTerrainHeightIndex(blockPos.x, blockPos.z)];
+        terrainHeight = (terrainHeight+1)/2;
+        terrainHeight *= 16;
+        if (blockPos.y < terrainHeight) {
+            chunkPtr->blocks[i] = true;
+        }
+    }
+
+    updateChunkMesh(chunkPos, chunkPtr);
+    chunks.insert(std::make_pair(chunkPos, std::move(chunkPtr)));
+
+    std::array<IntPos, 6> dirs = {
+        IntPos( 0,  1,  0), // TOP
+        IntPos( 0, -1,  0), // BOTTOM
+        IntPos(-1,  0,  0), // LEFT
+        IntPos( 1,  0,  0), // RIGHT
+        IntPos( 0,  0,  1), // FORWARD
+        IntPos( 0,  0, -1), // BACKWARD
+    };
+    for (IntPos dir: dirs) {
+        IntPos sideChunkPos = chunkPos + dir;
+        if (chunkLoaded(sideChunkPos)) {
+            updateChunkMesh(sideChunkPos, chunks.at(sideChunkPos));
+        }
+    }
+}
+
+void ChunkLoader::updateChunkMesh(IntPos chunkPos, std::unique_ptr<Chunk> &chunkPtr) {
+    if (!chunkLoaded(chunkPos + IntPos( 0,  1,  0)) ||  // TOP
+        !chunkLoaded(chunkPos + IntPos( 0, -1,  0)) ||  // BOTTOM
+        !chunkLoaded(chunkPos + IntPos(-1,  0,  0)) ||  // LEFT
+        !chunkLoaded(chunkPos + IntPos( 1,  0,  0)) ||  // RIGHT
+        !chunkLoaded(chunkPos + IntPos( 0,  0,  1)) ||  // FORWARD
+        !chunkLoaded(chunkPos + IntPos( 0,  0, -1))     // BACKWARD
+    ) {
+        return;
+    }
+
+    std::array<Chunk*, 6> sideChunks = {
+        chunks.at(chunkPos + IntPos( 0,  1,  0)).get(), // TOP
+        chunks.at(chunkPos + IntPos( 0, -1,  0)).get(), // BOTTOM
+        chunks.at(chunkPos + IntPos(-1,  0,  0)).get(), // LEFT
+        chunks.at(chunkPos + IntPos( 1,  0,  0)).get(), // RIGHT
+        chunks.at(chunkPos + IntPos( 0,  0,  1)).get(), // FORWARD
+        chunks.at(chunkPos + IntPos( 0,  0, -1)).get(), // BACKWARD
+    };
+    chunkPtr->updateMesh(sideChunks);
 }

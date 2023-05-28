@@ -2,12 +2,16 @@
 #define CHUNK_H
 
 #include <array>
+#include <memory>
 #include <Codes/GraphicTypes/mesh.h>
 class IntPos;
 
-const int CHUNK_SIZE = 16;
+const int CHUNK_WIDTH = 16;
+const int CHUNK_VOLUME = CHUNK_WIDTH*CHUNK_WIDTH*CHUNK_WIDTH;
 
 class Chunk {
+    friend class ChunkLoader;
+
 public:
     Chunk();
 
@@ -15,19 +19,20 @@ public:
     void breakBlock(IntPos pos);
     bool getBlock(IntPos pos) const;
 
-    void updateMesh();
+    void updateMesh(const std::array<Chunk*, 6> &sideChunks);
+
     void draw() const;
 
     ~Chunk();
     
 private:
-    std::array<bool, CHUNK_SIZE*CHUNK_SIZE*CHUNK_SIZE> blocks = {};
+    std::array<bool, CHUNK_VOLUME> blocks = {};
     Mesh mesh;
-    bool meshInitialized = false;
+    bool chunkReady = false;
     bool meshUpdateRequested = true;
 
-    int posToIndex(IntPos pos) const;
-    IntPos indexToPos(int index) const;
+    static int posToIndex(IntPos pos);
+    static IntPos indexToPos(int index);
 };
 
 #endif

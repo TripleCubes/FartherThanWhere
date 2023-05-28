@@ -29,6 +29,8 @@ project "FartherThanWhere"
 
     buildoptions { "-Wall" }
 
+    defines { "FASTNOISE_STATIC_LIB" }
+
     links { "gdi32", "GLFW", "GLAD", "FastNoise2", "FreeType", }
 
     filter "configurations:Debug"

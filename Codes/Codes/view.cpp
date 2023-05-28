@@ -14,7 +14,7 @@ extern int currentWindowHeight;
 View::View(const Settings &settings, const ChunkLoader &chunkLoader): 
 settings(settings), chunkLoader(chunkLoader) {
     shader.init("Shaders/view");
-    cameraPos = Vec3(0, 0, 30);
+    cameraPos = Vec3(0, 30, 0);
 }
 
 void View::update() {}
@@ -60,7 +60,7 @@ void View::draw() const {
     shader.setUniform("viewMat", viewMat);
 
     for (const auto &i: chunkLoader.chunks) {
-        Vec3 pos = Vec3(i.first) * CHUNK_SIZE;
+        Vec3 pos = Vec3(i.first) * CHUNK_WIDTH;
         glm::mat4 modelMat = glm::mat4(1.0f);
         modelMat = glm::translate(modelMat, pos.toGlmVec3());
         shader.setUniform("modelMat", modelMat);

@@ -311,16 +311,16 @@ void Chunk::createSurfaceList(std::vector<Surface> &surfaceList,
                 checkingIndex = right(checkingIndex, faceDir);
             }
 
-            int checkingIndexY = down(faceIndex, faceDir);
+            int checkingIndex_y = down(faceIndex, faceDir);
             while (true) {
                 if (checkStartY + surfaceH >= CHUNK_WIDTH) {
                     goto stopYCheck;
                 }
 
-                int checkingIndex = checkingIndexY;
+                int checkingIndex = checkingIndex_y;
                 for (int i = 0; i < surfaceW; i++) {
                     if (!faceList[checkingIndex] || faceCheckedList[checkingIndex]) {
-                        while (checkingIndex != checkingIndexY) {
+                        while (checkingIndex != checkingIndex_y) {
                             checkingIndex = left(checkingIndex, faceDir);
                             faceCheckedList[checkingIndex] = false;
                         }
@@ -331,7 +331,7 @@ void Chunk::createSurfaceList(std::vector<Surface> &surfaceList,
                 }
 
                 surfaceH++;
-                checkingIndexY = down(checkingIndexY, faceDir);
+                checkingIndex_y = down(checkingIndex_y, faceDir);
             }
             stopYCheck:
 

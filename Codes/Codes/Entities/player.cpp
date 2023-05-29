@@ -1,4 +1,4 @@
-#include <Codes/player.h>
+#include <Codes/Entities/player.h>
 
 void Player::setPos(Vec3 pos) {
     pos = pos;

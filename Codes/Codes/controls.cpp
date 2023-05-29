@@ -59,12 +59,12 @@ void Controls::updateCameraDir() {
     }
     cameraRotationY -= mouseMoveOffset.x * 0.17;
 
-    view.setCameraDir(Vec3(0, 0, -1).rotateXY(cameraRotationX, cameraRotationY));
+    view.camera.setDir(Vec3(0, 0, -1).rotateXY(cameraRotationX, cameraRotationY));
 }
 
 void Controls::updateMovements() {
     Vec3 moveDir(0, 0, 0);
-    Vec3 cameraDir = view.getCameraDir();
+    Vec3 cameraDir = view.camera.getDir();
     cameraDir.y = 0;
     cameraDir = cameraDir.normalize();
     Vec3 cameraDirRotated = cameraDir.rotateY(90);
@@ -89,6 +89,6 @@ void Controls::updateMovements() {
     
     if (moveDir != Vec3(0, 0, 0)) {
         moveDir = moveDir.normalize() * 0.4;
-        view.setCameraPos(view.getCameraPos() + moveDir);
+        view.camera.setPos(view.camera.getPos() + moveDir);
     }
 }

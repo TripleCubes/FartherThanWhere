@@ -5,7 +5,7 @@
 #include <Codes/settings.h>
 #include <Codes/view.h>
 #include <Codes/Time/intervals.h>
-#include <Codes/player.h>
+#include <Codes/Entities/player.h>
 class World;
 class ChunkLoader;
 

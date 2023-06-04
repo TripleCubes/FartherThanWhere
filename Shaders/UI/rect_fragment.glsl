@@ -7,8 +7,7 @@ uniform bool drawTexture;
 uniform vec4 rectColor;
 uniform sampler2D rectTexture;
 
-void main()
-{
+void main() {
     if (!drawTexture) {
         out_color = rectColor;
         return;

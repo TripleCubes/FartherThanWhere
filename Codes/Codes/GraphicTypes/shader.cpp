@@ -71,7 +71,7 @@ void Shader::init(const std::string &vertexShaderPath, const std::string &fragme
 
 void Shader::init(const std::string &shaderPath) {
     shaderId = glCreateProgram();
-    linkShaderProgram(shaderId, shaderPath + "Vertex.glsl", shaderPath + "Fragment.glsl");
+    linkShaderProgram(shaderId, shaderPath + "_vertex.glsl", shaderPath + "_fragment.glsl");
     initialized = true;
 }
 

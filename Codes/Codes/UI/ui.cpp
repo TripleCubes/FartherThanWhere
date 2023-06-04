@@ -2,7 +2,6 @@
 
 #include <Codes/Types/vec2.h>
 #include <Codes/Types/color.h>
-#include <glad/glad.h>
 
 #include <Codes/print.h>
 

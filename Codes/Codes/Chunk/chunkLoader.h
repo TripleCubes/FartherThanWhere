@@ -3,7 +3,6 @@
 
 #include <unordered_map>
 #include <memory>
-#include <Codes/view.h>
 #include <Codes/Types/intPos.h>
 #include <Codes/Chunk/chunk.h>
 
@@ -11,8 +10,8 @@
 #include <FastNoise/FastNoise.h>
 
 class ChunkLoader {
-    friend void View::draw() const;
-
+    friend class View;
+    
 public:
     ChunkLoader();
 

@@ -6,6 +6,8 @@
 extern int currentWindowWidth;
 extern int currentWindowHeight;
 
+Framebuffer::Framebuffer() {}
+
 void Framebuffer::init(bool multisample, bool linearFilter, int width, int height) {
     if (width == 0) {
         width = currentWindowWidth;

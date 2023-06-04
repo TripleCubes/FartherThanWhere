@@ -4,6 +4,8 @@
 #include <stb_image.h>
 #include <Codes/print.h>
 
+Texture::Texture() {}
+
 void Texture::init(const std::string &path, bool isLinearFilter) {
     glGenTextures(1, &textureId);
     glBindTexture(GL_TEXTURE_2D, textureId);

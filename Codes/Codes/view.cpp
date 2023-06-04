@@ -14,7 +14,7 @@ extern int currentWindowHeight;
 
 View::View(const Settings &settings, const ChunkLoader &chunkLoader): 
 settings(settings), chunkLoader(chunkLoader) {
-    shader.init("Shaders/view");
+    shader.init("Shaders/View/view");
     camera.setPos(Vec3(0, 30, 0));
 }
 

@@ -3,6 +3,8 @@
 
 class Framebuffer {
 public:
+    Framebuffer();
+    
     void init(bool multisample = false, bool linearFilter = false, int width = 0, int height = 0);
     void bind() const;
     unsigned int getFBO() const;

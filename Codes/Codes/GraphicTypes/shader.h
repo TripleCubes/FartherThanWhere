@@ -23,7 +23,8 @@ public:
     void setUniform(const std::string &uniformName, Vec2 vec) const;
     void setUniform(const std::string &uniformName, Color color) const;
     void setUniform(const std::string &uniformName, int num) const;
-    void setUniform(const std::string &uniformName, Texture texture, int textureUniformIndex) const;
+    void setUniform(const std::string &uniformName, bool b) const;
+    void setUniform(const std::string &uniformName, const Texture &texture, int textureUniformIndex) const;
     void setUniform(const std::string &uniformName, unsigned int textureId, int textureUniformIndex) const;
     void release();
 

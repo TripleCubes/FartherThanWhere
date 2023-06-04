@@ -159,7 +159,19 @@ void Shader::setUniform(const std::string &uniformName, int num) const {
     glUniform1i(glGetUniformLocation(shaderId, uniformName.c_str()), num);
 }
 
-void Shader::setUniform(const std::string &uniformName, Texture texture, int textureUniformIndex) const {
+void Shader::setUniform(const std::string &uniformName, bool b) const {
+    if (!initialized) {
+        PRINTLN("cant set bool uniform of uninitialized shader");
+        return;
+    }
+    if (released) {
+        PRINTLN("cant set bool uniform of released shader");
+        return;
+    }
+    glUniform1i(glGetUniformLocation(shaderId, uniformName.c_str()), b);
+}
+
+void Shader::setUniform(const std::string &uniformName, const Texture &texture, int textureUniformIndex) const {
     if (!initialized) {
         PRINTLN("cant set texture uniform of uninitialized shader");
         return;

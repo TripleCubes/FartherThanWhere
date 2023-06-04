@@ -5,6 +5,7 @@
 #include <Codes/game.h>
 #include <Codes/input.h>
 #include <Codes/Time/time.h>
+#include <Codes/UI/ui.h>
 #include <Codes/print.h>
 
 extern GLFWwindow *glfwWindow;
@@ -74,6 +75,7 @@ int main() {
 
     {
         Input::init();
+        UI::init();
 
         World world;
         Game game(world);
@@ -86,11 +88,15 @@ int main() {
 
             world.update();
             game.update();
+            game.draw();
+            UI::draw();
             glfwSwapBuffers(glfwWindow);
 
             Time::syncFrame();
             Time::update();
         }
+
+        UI::release();
     }
 
     PRINTLN("Game closed successfully");

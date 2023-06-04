@@ -9,11 +9,13 @@ void Game::update() {
     controls.update();
 
     view.update();
-    view.draw();
 
     intervals.updateIntervals();
 }
 
+void Game::draw() const {
+    view.draw();
+}
+
 Game::~Game() {
-    PRINTLN("game deconstructed");
 }

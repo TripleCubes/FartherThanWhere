@@ -5,6 +5,8 @@
 
 class Texture {
 public:
+    Texture();
+    
     void init(const std::string &path, bool isLinearFilter = false);
     unsigned int getTextureId() const;
     int getWidth() const;

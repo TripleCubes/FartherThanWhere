@@ -13,6 +13,7 @@ class Game {
 public:
     Game(World &world);
     void update();
+    void draw() const;
     ~Game();
     
 private:

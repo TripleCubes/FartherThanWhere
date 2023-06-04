@@ -8,6 +8,7 @@ Game::Game(World &world): chunkLoader(world.chunkLoader) {}
 void Game::update() {
     controls.update();
 
+    view.update();
     view.draw();
 
     intervals.updateIntervals();

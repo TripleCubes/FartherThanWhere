@@ -9,6 +9,7 @@ class World {
 
 public:
     ~World();
+    void update();
 
 private:
     ChunkLoader chunkLoader;

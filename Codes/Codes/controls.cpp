@@ -5,6 +5,8 @@
 #include <Codes/settings.h>
 #include <Codes/Types/vec2.h>
 #include <Codes/Types/vec3.h>
+#include <Codes/Raycast/blockRaycast.h>
+#include <Codes/Chunk/chunkLoader.h>
 #include <Codes/print.h>
 #include <GLFW/glfw3.h>
 
@@ -13,12 +15,14 @@ extern int currentWindowWidth;
 extern int currentWindowHeight;
 extern bool mouseLock;
 
-Controls::Controls(Settings &settings, View &view): settings(settings), view(view) {}
+Controls::Controls(Settings &settings, View &view, ChunkLoader &chunkLoader): 
+settings(settings), view(view), chunkLoader(chunkLoader) {}
 
 void Controls::update() {
     updateSettings();
     updateCameraDir();
     updateMovements();
+    placeBreakBlock();
 }
 
 void Controls::updateSettings() {
@@ -88,7 +92,23 @@ void Controls::updateMovements() {
     }
     
     if (moveDir != Vec3(0, 0, 0)) {
-        moveDir = moveDir.normalize() * 0.4;
+        moveDir = moveDir.normalize() * 0.2;
         view.camera.setPos(view.camera.getPos() + moveDir);
+    }
+}
+
+void Controls::placeBreakBlock() {
+    if (Input::justPressed(MouseButton::LEFT)) {
+        const BlockRaycast::Result &blockRaycastResult = view.camera.getBlockRaycastResult();
+        if (blockRaycastResult.found) {
+            chunkLoader.breakBlock(blockRaycastResult.selectedPos);
+        }
+    }
+
+    if (Input::justPressed(MouseButton::RIGHT)) {
+        const BlockRaycast::Result &blockRaycastResult = view.camera.getBlockRaycastResult();
+        if (blockRaycastResult.hasPlacingPos) {
+            chunkLoader.placeBlock(blockRaycastResult.placingPos);
+        }
     }
 }

@@ -11,6 +11,8 @@ Vec3::Vec3(glm::vec3 glmVec): x(glmVec.x), y(glmVec.y), z(glmVec.z) {}
 
 Vec3::Vec3(IntPos pos): x(pos.x), y(pos.y), z(pos.z) {}
 
+Vec3::Vec3() {}
+
 glm::vec3 Vec3::toGlmVec3() const {
     return glm::vec3(x, y, z);
 }

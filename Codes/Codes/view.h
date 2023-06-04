@@ -20,11 +20,11 @@ public:
     ~View();
     
 private:
-    Camera camera;
-    Shader shader;
-
     const Settings &settings;
     const ChunkLoader &chunkLoader;
+
+    Camera camera = Camera(chunkLoader);
+    Shader shader;
 };
 
 #endif

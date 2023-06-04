@@ -27,6 +27,64 @@ ChunkLoader::ChunkLoader() {
     }
 }
 
+void ChunkLoader::update() {
+    for (auto &chunk: chunks) {
+        if (!chunk.second->isMeshUpdateRequested()) {
+            continue;
+        }
+
+        updateChunkMesh(chunk.first, chunk.second);
+    }
+}
+
+bool ChunkLoader::getBlock(IntPos blockPos) const {
+    IntPos chunkPos = blockPos.getChunkPos();
+    if (chunkLoaded(chunkPos)) {
+        return chunks.at(chunkPos)->getBlock(blockPos.getBlockPosInChunk());
+    }
+    return false;
+}
+
+void ChunkLoader::breakBlock(IntPos blockPos) {
+    IntPos chunkPos = blockPos.getChunkPos();
+    if (!chunkLoaded(chunkPos)) {
+        return;
+    }
+
+    chunks.at(chunkPos)->breakBlock(blockPos.getBlockPosInChunk());
+
+    requestUpdateSideChunkMeshes(chunkPos);
+}
+
+void ChunkLoader::placeBlock(IntPos blockPos) {
+    IntPos chunkPos = blockPos.getChunkPos();
+    if (!chunkLoaded(chunkPos)) {
+        return;
+    }
+
+    chunks.at(chunkPos)->placeBlock(blockPos.getBlockPosInChunk());
+
+    requestUpdateSideChunkMeshes(chunkPos);
+}
+
+void ChunkLoader::requestUpdateSideChunkMeshes(IntPos chunkPos) {
+    // Can be optimized: Only update mesh of chunk next to the placed block
+    std::array<IntPos, 6> dirs = {
+        IntPos( 0,  1,  0), // TOP
+        IntPos( 0, -1,  0), // BOTTOM
+        IntPos(-1,  0,  0), // LEFT
+        IntPos( 1,  0,  0), // RIGHT
+        IntPos( 0,  0,  1), // FORWARD
+        IntPos( 0,  0, -1), // BACKWARD
+    };
+    for (IntPos dir: dirs) {
+        IntPos sideChunkPos = chunkPos + dir;
+        if (chunkLoaded(sideChunkPos)) {
+            chunks.at(sideChunkPos)->meshUpdateRequested = true;
+        }
+    }
+}
+
 bool ChunkLoader::chunkLoaded(IntPos chunkPos) const {
     return chunks.find(chunkPos) != chunks.end();
 }
@@ -55,21 +113,6 @@ void ChunkLoader::loadChunk(IntPos chunkPos) {
 
     updateChunkMesh(chunkPos, chunkPtr);
     chunks.insert(std::make_pair(chunkPos, std::move(chunkPtr)));
-
-    std::array<IntPos, 6> dirs = {
-        IntPos( 0,  1,  0), // TOP
-        IntPos( 0, -1,  0), // BOTTOM
-        IntPos(-1,  0,  0), // LEFT
-        IntPos( 1,  0,  0), // RIGHT
-        IntPos( 0,  0,  1), // FORWARD
-        IntPos( 0,  0, -1), // BACKWARD
-    };
-    for (IntPos dir: dirs) {
-        IntPos sideChunkPos = chunkPos + dir;
-        if (chunkLoaded(sideChunkPos)) {
-            updateChunkMesh(sideChunkPos, chunks.at(sideChunkPos));
-        }
-    }
 }
 
 void ChunkLoader::updateChunkMesh(IntPos chunkPos, std::unique_ptr<Chunk> &chunkPtr) {

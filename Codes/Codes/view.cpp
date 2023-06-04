@@ -18,7 +18,9 @@ settings(settings), chunkLoader(chunkLoader) {
     camera.setPos(Vec3(0, 30, 0));
 }
 
-void View::update() {}
+void View::update() {
+    camera.update();
+}
 
 void View::draw() const {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -39,12 +41,12 @@ void View::draw() const {
                                                 0.1f, 300.0f);
     glm::mat4 viewMat = glm::mat4(1.0f);
     if (!settings.isThirdPersonView()) {
-        viewMat = glm::lookAt((camera.getPos() + Vec3(0, 1.5, 0)).toGlmVec3(),
-                                (camera.getPos() + Vec3(0, 1.5, 0) + camera.getDir()).toGlmVec3(),
+        viewMat = glm::lookAt((camera.getPos()).toGlmVec3(),
+                                (camera.getPos() + camera.getDir()).toGlmVec3(),
                                 glm::vec3(0.0f, 1.0f, 0.0f));
     } else {
-        viewMat = glm::lookAt((camera.getPos() + Vec3(0, 1.5, 0) - (camera.getDir() * 10)).toGlmVec3(),
-                                (camera.getPos() + Vec3(0, 1.5, 0)).toGlmVec3(),
+        viewMat = glm::lookAt((camera.getPos() - (camera.getDir() * 10)).toGlmVec3(),
+                                (camera.getPos()).toGlmVec3(),
                                 glm::vec3(0.0f, 1.0f, 0.0f));
     }
 

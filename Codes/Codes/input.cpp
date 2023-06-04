@@ -57,7 +57,7 @@ void Input::update() {
     }
 
     if (glfwGetMouseButton(glfwWindow, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
-        if (leftPressed) {
+        if (!leftPressed) {
             leftJustPressed = true;
         } else {
             leftJustPressed = false;
@@ -69,7 +69,7 @@ void Input::update() {
     }
 
     if (glfwGetMouseButton(glfwWindow, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
-        if (rightPressed) {
+        if (!rightPressed) {
             rightJustPressed = true;
         } else {
             rightJustPressed = false;

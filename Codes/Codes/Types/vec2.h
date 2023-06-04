@@ -6,6 +6,7 @@ struct Vec2 {
     float y = 0;
 
     Vec2(float x, float y);
+    Vec2();
 
     bool operator == (Vec2 vec) const;
     Vec2 operator + (Vec2 vec) const;

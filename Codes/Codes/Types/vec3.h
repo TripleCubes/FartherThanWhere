@@ -11,6 +11,7 @@ struct Vec3 {
     Vec3(float x, float y, float z);
     Vec3(glm::vec3 glmVec);
     Vec3(IntPos pos);
+    Vec3();
     glm::vec3 toGlmVec3() const;
 
     bool operator == (Vec3 vec) const;

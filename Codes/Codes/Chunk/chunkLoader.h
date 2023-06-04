@@ -16,6 +16,12 @@ class ChunkLoader {
 public:
     ChunkLoader();
 
+    void update();
+
+    bool getBlock(IntPos blockPos) const;
+    void placeBlock(IntPos blockPos);
+    void breakBlock(IntPos blockPos);
+
 private:
     struct IntPosHash {
         std::size_t operator () (const IntPos &pos) const;
@@ -24,6 +30,7 @@ private:
 
     void loadChunk(IntPos chunkPos);
     bool chunkLoaded(IntPos chunkPos) const;
+    void requestUpdateSideChunkMeshes(IntPos chunkPos);
 
     //
     FastNoise::SmartNode<FastNoise::FractalFBm> terrainHeightFractal;

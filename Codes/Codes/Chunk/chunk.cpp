@@ -383,12 +383,12 @@ void Chunk::createVerticies(std::vector<float> &verticies,
         case 2:
             surfaceVerticies = {
 //              Pos                         Normal      UV
-                pos.x  , pos.y+w, pos.z  , -1,  0,  0,  0,  1, // A LEFT
-                pos.x  , pos.y+w, pos.z+h, -1,  0,  0,  1,  1, // D
-                pos.x  , pos.y  , pos.z+h, -1,  0,  0,  1,  0, // H
+                pos.x  , pos.y+h, pos.z  , -1,  0,  0,  0,  1, // A LEFT
+                pos.x  , pos.y+h, pos.z+w, -1,  0,  0,  1,  1, // D
+                pos.x  , pos.y  , pos.z+w, -1,  0,  0,  1,  0, // H
 
-                pos.x  , pos.y+w, pos.z  , -1,  0,  0,  0,  1, // A
-                pos.x  , pos.y  , pos.z+h, -1,  0,  0,  1,  0, // H
+                pos.x  , pos.y+h, pos.z  , -1,  0,  0,  0,  1, // A
+                pos.x  , pos.y  , pos.z+w, -1,  0,  0,  1,  0, // H
                 pos.x  , pos.y  , pos.z  , -1,  0,  0,  0,  0, // E
             };
             break;
@@ -396,13 +396,13 @@ void Chunk::createVerticies(std::vector<float> &verticies,
         case 3:
             surfaceVerticies = {
 //              Pos                         Normal      UV
-                pos.x+1, pos.y+w, pos.z  ,  1,  0,  0,  1,  1, // B RIGHT
-                pos.x+1, pos.y  , pos.z+h,  1,  0,  0,  0,  0, // G
-                pos.x+1, pos.y+w, pos.z+h,  1,  0,  0,  0,  1, // C
+                pos.x+1, pos.y+h, pos.z  ,  1,  0,  0,  1,  1, // B RIGHT
+                pos.x+1, pos.y  , pos.z+w,  1,  0,  0,  0,  0, // G
+                pos.x+1, pos.y+h, pos.z+w,  1,  0,  0,  0,  1, // C
 
-                pos.x+1, pos.y+w, pos.z  ,  1,  0,  0,  1,  1, // B
+                pos.x+1, pos.y+h, pos.z  ,  1,  0,  0,  1,  1, // B
                 pos.x+1, pos.y  , pos.z  ,  1,  0,  0,  1,  0, // F
-                pos.x+1, pos.y  , pos.z+h,  1,  0,  0,  0,  0, // G
+                pos.x+1, pos.y  , pos.z+w,  1,  0,  0,  0,  0, // G
             };
             break;
 
@@ -453,6 +453,10 @@ void Chunk::updateMesh(const std::array<Chunk*, 6> &sideChunks) {
     mesh.set3d(verticies);
     chunkReady = true;
     meshUpdateRequested = false;
+}
+
+bool Chunk::isMeshUpdateRequested() const {
+    return meshUpdateRequested;
 }
 
 void Chunk::draw() const {

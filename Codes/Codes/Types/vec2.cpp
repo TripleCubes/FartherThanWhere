@@ -4,6 +4,7 @@
 #include <Codes/print.h>
 
 Vec2::Vec2(float x, float y): x(x), y(y) {}
+Vec2::Vec2() {}
 
 bool Vec2::operator == (Vec2 vec) const {
     return x==vec.x && y==vec.y;

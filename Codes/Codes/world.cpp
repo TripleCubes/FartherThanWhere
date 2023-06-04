@@ -5,3 +5,7 @@
 World::~World() {
     PRINTLN("world deconstructed");
 }
+
+void World::update() {
+    chunkLoader.update();
+}

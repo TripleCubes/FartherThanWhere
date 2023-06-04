@@ -21,6 +21,7 @@ public:
     bool getBlock(IntPos pos) const;
 
     void updateMesh(const std::array<Chunk*, 6> &sideChunks);
+    bool isMeshUpdateRequested() const;
 
     void draw() const;
 
@@ -38,11 +39,11 @@ private:
     void createFaceList(std::array<bool, CHUNK_VOLUME*6> &faceList, 
                             const std::array<Chunk*, 6> &sideChunks) const;
     struct Surface {
-        Vec2 uv = Vec2(0, 0);
+        Vec2 uv;
         int w = 0;
         int h = 0;
         int faceDir = 0;
-        IntPos blockPos = IntPos(0, 0, 0);
+        IntPos blockPos;
     };
     void createSurfaceList(std::vector<Surface> &surfaceList, 
                             std::array<bool, CHUNK_VOLUME*6> &faceList) const;

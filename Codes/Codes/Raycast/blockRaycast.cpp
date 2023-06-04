@@ -69,6 +69,13 @@ Vec3 nextCheckingPos(Vec3 checkingPos, Vec3 dir) {
         nextPos.x = checkingPos.x + distanceToBlockEdge.x * dirSign.x;
         nextPos.y = checkingPos.y + distanceToBlockEdge.x / abs(dir.x) * abs(dir.y) * dirSign.y; // if distanceDivDir.x is min,
         nextPos.z = checkingPos.z + distanceToBlockEdge.x / abs(dir.x) * abs(dir.z) * dirSign.z; // dir.x wouldnt be 0
+
+        if (floor(checkingPos.y) != floor(nextPos.y)) {
+            nextPos.y -= dirSign.y * 0.0015;
+        }
+        if (floor(checkingPos.z) != floor(nextPos.z)) {
+            nextPos.z -= dirSign.z * 0.0015;
+        }
         return nextPos;
     }
     if (isMin(distanceDivDir.y, distanceDivDir.x, distanceDivDir.z)) {
@@ -76,6 +83,13 @@ Vec3 nextCheckingPos(Vec3 checkingPos, Vec3 dir) {
         nextPos.y = checkingPos.y + distanceToBlockEdge.y * dirSign.y;
         nextPos.x = checkingPos.x + distanceToBlockEdge.y / abs(dir.y) * abs(dir.x) * dirSign.x;
         nextPos.z = checkingPos.z + distanceToBlockEdge.y / abs(dir.y) * abs(dir.z) * dirSign.z;
+
+        if (floor(checkingPos.x) != floor(nextPos.x)) {
+            nextPos.x -= dirSign.x * 0.0015;
+        }
+        if (floor(checkingPos.z) != floor(nextPos.z)) {
+            nextPos.z -= dirSign.z * 0.0015;
+        }
         return nextPos;
     }
     // if distanceDivDir.z is min
@@ -83,6 +97,13 @@ Vec3 nextCheckingPos(Vec3 checkingPos, Vec3 dir) {
     nextPos.z = checkingPos.z + distanceToBlockEdge.z * dirSign.z;
     nextPos.x = checkingPos.x + distanceToBlockEdge.z / abs(dir.z) * abs(dir.x) * dirSign.x;
     nextPos.y = checkingPos.y + distanceToBlockEdge.z / abs(dir.z) * abs(dir.y) * dirSign.y;
+
+    if (floor(checkingPos.y) != floor(nextPos.y)) {
+            nextPos.y -= dirSign.y * 0.0015;
+    }
+    if (floor(checkingPos.x) != floor(nextPos.x)) {
+        nextPos.x -= dirSign.x * 0.0015;
+    }
     return nextPos;
 }
 

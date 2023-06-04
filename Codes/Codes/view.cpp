@@ -71,15 +71,6 @@ void View::draw() const {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
 
-    if (settings.isWireframeMode())
-    {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    }
-    else
-    {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    }
-
     drawChunks(projectionMat, viewMat);
     drawBlockSelection(projectionMat, viewMat);
 }
@@ -89,6 +80,11 @@ void View::drawChunks(glm::mat4 &projectionMat, glm::mat4 &viewMat) const {
     viewShader.setUniform("projectionMat", projectionMat);
     viewShader.setUniform("viewMat", viewMat);
 
+    if (settings.isWireframeMode())
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    }
+
     for (const auto &i: chunkLoader.chunks) {
         Vec3 pos = Vec3(i.first) * CHUNK_WIDTH;
         glm::mat4 modelMat = glm::mat4(1.0f);
@@ -96,6 +92,7 @@ void View::drawChunks(glm::mat4 &projectionMat, glm::mat4 &viewMat) const {
         viewShader.setUniform("modelMat", modelMat);
         i.second->draw();
     }
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 void View::drawBlockSelection(glm::mat4 &projectionMat, glm::mat4 &viewMat) const {

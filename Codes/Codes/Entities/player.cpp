@@ -1,9 +1,13 @@
 #include <Codes/Entities/player.h>
 
-#include <Codes/print.h>
+#include <Codes/settings.h>
+#include <Codes/Chunk/chunkLoader.h>
 #include <vector>
+#include <cmath>
+#include <Codes/print.h>
 
-Player::Player() {
+Player::Player(const Settings &settings, const ChunkLoader &chunkLoader): 
+settings(settings), chunkLoader(chunkLoader) {
     std::vector<float> playerVerticies = {
         -0.5,    2, -0.5,    0,    1,    0,    0,    1, // A
          0.5,    2,  0.5,    0,    1,    0,    1,    0, // C
@@ -68,6 +72,144 @@ Vec3 Player::getPos() const {
 
 void Player::draw() const {
     mesh.draw();
+}
+
+void Player::move(Vec3 dir) {
+    if (settings.isCollisionDisabled()) {
+        pos += dir * moveSpeed;
+        return;
+    }
+
+    dir = dir.normalize();
+
+    moveAxis(dir.y * moveSpeed, Axis::Y);
+    moveAxis(dir.x * moveSpeed, Axis::X);
+    moveAxis(dir.z * moveSpeed, Axis::Z);
+}
+
+void Player::moveAxis(float moveAmount, Axis axis) {
+    if (moveAmount == 0) {
+        return;
+    }
+
+    auto getNextPos = [axis, moveAmount, this]() -> Vec3 {
+        switch (axis) {
+        case Axis::X:
+            return pos + Vec3(moveAmount, 0, 0);
+            break;
+
+        case Axis::Y:
+            return pos + Vec3(0, moveAmount, 0);
+            break;
+
+        case Axis::Z:
+            return pos + Vec3(0, 0, moveAmount);
+            break;
+
+        default:
+            return Vec3(0, 0, 0);
+            break;
+        }
+    };
+
+    Vec3 nextPos = getNextPos();
+
+    std::vector<Vec3> collisionCheckPosList;
+
+    switch (axis) {
+    case Axis::X:
+        if (moveAmount > 0) {
+            collisionCheckPosList = {
+                nextPos + Vec3(0.4999, 0.0001,  0.4999),
+                nextPos + Vec3(0.4999, 0.0001, -0.4999),
+                nextPos + Vec3(0.4999, 1     ,  0.4999),
+                nextPos + Vec3(0.4999, 1     , -0.4999),
+                nextPos + Vec3(0.4999, 1.9999,  0.4999),
+                nextPos + Vec3(0.4999, 1.9999, -0.4999),
+            };
+        } else {
+            collisionCheckPosList = {
+                nextPos + Vec3(-0.4999, 0.0001,  0.4999),
+                nextPos + Vec3(-0.4999, 0.0001, -0.4999),
+                nextPos + Vec3(-0.4999, 1     ,  0.4999),
+                nextPos + Vec3(-0.4999, 1     , -0.4999),
+                nextPos + Vec3(-0.4999, 1.9999,  0.4999),
+                nextPos + Vec3(-0.4999, 1.9999, -0.4999),
+            };
+        }
+        break;
+
+    case Axis::Y:
+        if (moveAmount > 0) {
+            collisionCheckPosList = {
+                nextPos + Vec3( 0.4999, 1.9999, -0.4999),
+                nextPos + Vec3( 0.4999, 1.9999,  0.4999),
+                nextPos + Vec3(-0.4999, 1.9999, -0.4999),
+                nextPos + Vec3(-0.4999, 1.9999,  0.4999),
+            };
+        } else {
+            collisionCheckPosList = {
+                nextPos + Vec3( 0.4999, 0.0001, -0.4999),
+                nextPos + Vec3( 0.4999, 0.0001,  0.4999),
+                nextPos + Vec3(-0.4999, 0.0001, -0.4999),
+                nextPos + Vec3(-0.4999, 0.0001,  0.4999),
+            };
+        }
+        break;
+
+    case Axis::Z:
+        if (moveAmount > 0) {
+            collisionCheckPosList = {
+                nextPos + Vec3( 0.4999, 0.0001, 0.4999),
+                nextPos + Vec3(-0.4999, 0.0001, 0.4999),
+                nextPos + Vec3( 0.4999, 1     , 0.4999),
+                nextPos + Vec3(-0.4999, 1     , 0.4999),
+                nextPos + Vec3( 0.4999, 1.9999, 0.4999),
+                nextPos + Vec3(-0.4999, 1.9999, 0.4999),
+            };
+        } else {
+            collisionCheckPosList = {
+                nextPos + Vec3( 0.4999, 0.0001, -0.4999),
+                nextPos + Vec3(-0.4999, 0.0001, -0.4999),
+                nextPos + Vec3( 0.4999, 1     , -0.4999),
+                nextPos + Vec3(-0.4999, 1     , -0.4999),
+                nextPos + Vec3( 0.4999, 1.9999, -0.4999),
+                nextPos + Vec3(-0.4999, 1.9999, -0.4999),
+            };
+        }
+        break;
+
+    default: 
+        break;
+    }
+
+    auto collisionSnap = [axis, nextPos, this]() {
+        switch (axis) {
+        case Axis::X:
+            pos.x = floor(nextPos.x) + 0.5;
+            break;
+        
+        case Axis::Y:
+            pos.y = floor(nextPos.y + 0.5);
+            break;
+
+        case Axis::Z:
+            pos.z = floor(nextPos.z) + 0.5;
+            break;
+
+        default:
+            break;
+        }
+    };
+
+    for (Vec3 collisionCheckPos: collisionCheckPosList) {
+        if (chunkLoader.getBlock(IntPos(collisionCheckPos))) {
+            collisionSnap();
+            return;
+        }
+    }
+
+    pos = nextPos;
 }
 
 Player::~Player() {

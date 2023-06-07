@@ -23,7 +23,7 @@ private:
     Settings settings;
     View view = View(settings, chunkLoader, player);
     Intervals intervals;
-    Player player;
+    Player player = Player(settings, chunkLoader);
 };
 
 #endif

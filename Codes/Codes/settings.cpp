@@ -7,3 +7,7 @@ bool Settings::isThirdPersonView() const {
 bool Settings::isWireframeMode() const {
     return wireframeMode;
 }
+
+bool Settings::isCollisionDisabled() const {
+    return collisionDisabled;
+}

@@ -7,10 +7,12 @@ class Settings {
 public:
     bool isThirdPersonView() const;
     bool isWireframeMode() const;
+    bool isCollisionDisabled() const;
 
 private:
     bool thirdPersonView = false;
     bool wireframeMode = false;
+    bool collisionDisabled = false;
 };
 
 #endif

@@ -35,6 +35,10 @@ void Controls::updateSettings() {
         settings.wireframeMode = !settings.wireframeMode;
     }
 
+    if (Input::justPressed("N")) {
+        settings.collisionDisabled = !settings.collisionDisabled;
+    }
+
     if (Input::justPressed("ESC")) {
         mouseLock = !mouseLock;
         if (mouseLock) {
@@ -93,8 +97,9 @@ void Controls::updateMovements() {
     }
     
     if (moveDir != Vec3(0, 0, 0)) {
-        moveDir = moveDir.normalize() * 0.2;
-        player.setPos(player.getPos() + moveDir);
+        // moveDir = moveDir.normalize() * 0.2;
+        // player.setPos(player.getPos() + moveDir);
+        player.move(moveDir);
         view.camera.setPos(player.getPos() + Vec3(0, 1.5, 0));
     }
 }

@@ -16,9 +16,6 @@ extern int currentWindowHeight;
 View::View(const Settings &settings, const ChunkLoader &chunkLoader, const Player &player): 
 settings(settings), chunkLoader(chunkLoader), player(player) {
     viewShader.init("Shaders/View/view");
-    camera.setPos(player.getPos() + Vec3(0, 31.5, 0));
-
-
 
     blockSelectionShader.init("Shaders/View/blockSelection");
 
@@ -105,7 +102,7 @@ void View::drawChunks(glm::mat4 &projectionMat, glm::mat4 &viewMat) const {
 }
 
 void View::drawBlockSelection(glm::mat4 &projectionMat, glm::mat4 &viewMat) const {
-    if (!camera.getBlockRaycastResult().found) {
+    if (settings.isThirdPersonView() || !camera.getBlockRaycastResult().found) {
         return;
     }
     

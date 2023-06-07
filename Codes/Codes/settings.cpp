@@ -8,6 +8,10 @@ bool Settings::isWireframeMode() const {
     return wireframeMode;
 }
 
-bool Settings::isCollisionDisabled() const {
-    return collisionDisabled;
+bool Settings::isCollisionEnabled() const {
+    return collisionEnabled;
+}
+
+bool Settings::isFlying() const {
+    return flying;
 }

@@ -1,10 +1,16 @@
 #include <Codes/camera.h>
 
+#include <Codes/Entities/player.h>
 #include <Codes/print.h>
 
-Camera::Camera(const ChunkLoader& chunkLoader): chunkLoader(chunkLoader) {}
+Camera::Camera(const ChunkLoader &chunkLoader, const Player &player): 
+chunkLoader(chunkLoader), player(player) {
+    pos = player.getPos() + Vec3(0, 1.5, 0);
+}
 
 void Camera::update() {
+    pos = player.getPos() + Vec3(0, 1.5, 0);
+
     blockRaycastResult = blockRaycast.cast(pos, dir, 10);
 }
 

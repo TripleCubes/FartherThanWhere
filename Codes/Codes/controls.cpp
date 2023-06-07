@@ -36,7 +36,17 @@ void Controls::updateSettings() {
     }
 
     if (Input::justPressed("N")) {
-        settings.collisionDisabled = !settings.collisionDisabled;
+        settings.collisionEnabled = !settings.collisionEnabled;
+        settings.flying = true;
+    }
+
+    if (Input::justPressed("F")) {
+        if (!settings.collisionEnabled) {
+            settings.collisionEnabled = true;
+            settings.flying = false;
+        } else {
+            settings.flying = !settings.flying;
+        }
     }
 
     if (Input::justPressed("ESC")) {
@@ -89,18 +99,21 @@ void Controls::updateMovements() {
     if (Input::pressed("D")) {
         moveDir -= cameraDirRotated;
     }
-    if (Input::pressed("SPACE")) {
-        moveDir.y += 1;
-    }
-    if (Input::pressed("LEFT_SHIFT")) {
-        moveDir.y -= 1;
+    if (settings.isFlying() || !settings.isCollisionEnabled()) {
+        if (Input::pressed("SPACE")) {
+            moveDir.y += 1;
+        }
+        if (Input::pressed("LEFT_SHIFT")) {
+            moveDir.y -= 1;
+        }
+    } else {
+        if (Input::pressed("SPACE")) {
+            player.jump();
+        }
     }
     
     if (moveDir != Vec3(0, 0, 0)) {
-        // moveDir = moveDir.normalize() * 0.2;
-        // player.setPos(player.getPos() + moveDir);
         player.move(moveDir);
-        view.camera.setPos(player.getPos() + Vec3(0, 1.5, 0));
     }
 }
 

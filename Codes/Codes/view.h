@@ -27,7 +27,7 @@ private:
     const ChunkLoader &chunkLoader;
     const Player &player;
 
-    Camera camera = Camera(chunkLoader);
+    Camera camera = Camera(chunkLoader, player);
     Shader viewShader;
 
     void drawChunks(glm::mat4 &projectionMat, glm::mat4 &viewMat) const;

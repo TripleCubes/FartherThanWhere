@@ -4,10 +4,11 @@
 #include <Codes/Types/vec3.h>
 #include <Codes/Raycast/blockRaycast.h>
 class ChunkLoader;
+class Player;
 
 class Camera {
 public:
-    Camera(const ChunkLoader &chunkLoader);
+    Camera(const ChunkLoader &chunkLoader, const Player &player);
 
     void update();
 
@@ -22,6 +23,7 @@ private:
     Vec3 dir = Vec3(0, 0, 1);
 
     const ChunkLoader &chunkLoader;
+    const Player &player;
 
     BlockRaycast blockRaycast = BlockRaycast(chunkLoader);
     BlockRaycast::Result blockRaycastResult;

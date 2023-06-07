@@ -3,6 +3,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <Codes/Chunk/chunkLoader.h>
 #include <Codes/settings.h>
+#include <Codes/Entities/player.h>
 #include <Codes/Types/vec3.h>
 #include <Codes/Raycast/blockRaycast.h>
 
@@ -12,10 +13,10 @@
 extern int currentWindowWidth;
 extern int currentWindowHeight;
 
-View::View(const Settings &settings, const ChunkLoader &chunkLoader): 
-settings(settings), chunkLoader(chunkLoader) {
+View::View(const Settings &settings, const ChunkLoader &chunkLoader, const Player &player): 
+settings(settings), chunkLoader(chunkLoader), player(player) {
     viewShader.init("Shaders/View/view");
-    camera.setPos(Vec3(0, 30, 0));
+    camera.setPos(player.getPos() + Vec3(0, 31.5, 0));
 
 
 
@@ -67,23 +68,30 @@ void View::draw() const {
                                 glm::vec3(0.0f, 1.0f, 0.0f));
     }
 
+    viewShader.useProgram();
+    viewShader.setUniform("projectionMat", projectionMat);
+    viewShader.setUniform("viewMat", viewMat);
+
+    blockSelectionShader.useProgram();
+    blockSelectionShader.setUniform("projectionMat", projectionMat);
+    blockSelectionShader.setUniform("viewMat", viewMat);
+
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
 
     drawChunks(projectionMat, viewMat);
     drawBlockSelection(projectionMat, viewMat);
+    drawPlayer();
 }
 
 void View::drawChunks(glm::mat4 &projectionMat, glm::mat4 &viewMat) const {
-    viewShader.useProgram();
-    viewShader.setUniform("projectionMat", projectionMat);
-    viewShader.setUniform("viewMat", viewMat);
-
     if (settings.isWireframeMode())
     {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     }
+
+    viewShader.useProgram();
 
     for (const auto &i: chunkLoader.chunks) {
         Vec3 pos = Vec3(i.first) * CHUNK_WIDTH;
@@ -92,6 +100,7 @@ void View::drawChunks(glm::mat4 &projectionMat, glm::mat4 &viewMat) const {
         viewShader.setUniform("modelMat", modelMat);
         i.second->draw();
     }
+
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
@@ -99,18 +108,28 @@ void View::drawBlockSelection(glm::mat4 &projectionMat, glm::mat4 &viewMat) cons
     if (!camera.getBlockRaycastResult().found) {
         return;
     }
-
-    blockSelectionShader.useProgram();
-    blockSelectionShader.setUniform("projectionMat", projectionMat);
-    blockSelectionShader.setUniform("viewMat", viewMat);
     
     glm::mat4 modelMat = glm::mat4(1.0f);
     modelMat = glm::translate(modelMat, Vec3(camera.getBlockRaycastResult().selectedPos).toGlmVec3());
+    blockSelectionShader.useProgram();
     blockSelectionShader.setUniform("modelMat", modelMat);
 
     glLineWidth(2);
     blockSelectionMesh.draw();
     glLineWidth(1);
+}
+
+void View::drawPlayer() const {
+    if (!settings.isThirdPersonView()) {
+        return;
+    }
+
+    glm::mat4 modelMat = glm::mat4(1.0f);
+    modelMat = glm::translate(modelMat, player.getPos().toGlmVec3());
+    viewShader.useProgram();
+    viewShader.setUniform("modelMat", modelMat);
+
+    player.draw();
 }
 
 View::~View() {

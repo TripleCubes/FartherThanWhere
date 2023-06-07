@@ -19,9 +19,9 @@ public:
 private:
     ChunkLoader &chunkLoader;
 
-    Controls controls = Controls(settings, view, chunkLoader);
+    Controls controls = Controls(settings, view, chunkLoader, player);
     Settings settings;
-    View view = View(settings, chunkLoader);
+    View view = View(settings, chunkLoader, player);
     Intervals intervals;
     Player player;
 };

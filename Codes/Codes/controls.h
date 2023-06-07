@@ -4,10 +4,11 @@
 class View;
 class Settings;
 class ChunkLoader;
+class Player;
 
 class Controls {
 public:
-    Controls(Settings &settings, View &view, ChunkLoader &chunkLoader);
+    Controls(Settings &settings, View &view, ChunkLoader &chunkLoader, Player &player);
 
     void update();
     
@@ -15,6 +16,7 @@ private:
     Settings &settings;
     View &view;
     ChunkLoader &chunkLoader;
+    Player &player;
 
     float cameraRotationX = 0;
     float cameraRotationY = 0;

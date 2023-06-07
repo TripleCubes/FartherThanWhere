@@ -7,6 +7,7 @@
 #include <Codes/Types/vec3.h>
 #include <Codes/Raycast/blockRaycast.h>
 #include <Codes/Chunk/chunkLoader.h>
+#include <Codes/Entities/player.h>
 #include <Codes/print.h>
 #include <GLFW/glfw3.h>
 
@@ -15,8 +16,8 @@ extern int currentWindowWidth;
 extern int currentWindowHeight;
 extern bool mouseLock;
 
-Controls::Controls(Settings &settings, View &view, ChunkLoader &chunkLoader): 
-settings(settings), view(view), chunkLoader(chunkLoader) {}
+Controls::Controls(Settings &settings, View &view, ChunkLoader &chunkLoader, Player &player): 
+settings(settings), view(view), chunkLoader(chunkLoader), player(player) {}
 
 void Controls::update() {
     updateSettings();
@@ -93,7 +94,8 @@ void Controls::updateMovements() {
     
     if (moveDir != Vec3(0, 0, 0)) {
         moveDir = moveDir.normalize() * 0.2;
-        view.camera.setPos(view.camera.getPos() + moveDir);
+        player.setPos(player.getPos() + moveDir);
+        view.camera.setPos(player.getPos() + Vec3(0, 1.5, 0));
     }
 }
 

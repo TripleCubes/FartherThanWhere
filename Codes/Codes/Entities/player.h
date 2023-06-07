@@ -3,13 +3,24 @@
 
 #include <Codes/Types/vec3.h>
 
+#include <Codes/GraphicTypes/mesh.h>
+
 class Player {
+    friend class Controls;
+
 public:
-    void setPos(Vec3 pos);
+    Player();
+
     Vec3 getPos() const;
+    void draw() const;
+
+    ~Player();
     
 private:
-    Vec3 pos = Vec3(0, 30, 0);
+    Vec3 pos = Vec3(0, 0, 0);
+    void setPos(Vec3 pos);
+
+    Mesh mesh;
 };
 
 #endif

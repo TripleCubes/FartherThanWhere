@@ -8,12 +8,13 @@
 class ChunkLoader;
 class Settings;
 class Vec3;
+class Player;
 
 class View {
     friend class Controls;
 
 public:
-    View(const Settings &settings, const ChunkLoader &chunkLoader);
+    View(const Settings &settings, const ChunkLoader &chunkLoader, const Player &player);
     
     void update();
 
@@ -24,6 +25,7 @@ public:
 private:
     const Settings &settings;
     const ChunkLoader &chunkLoader;
+    const Player &player;
 
     Camera camera = Camera(chunkLoader);
     Shader viewShader;
@@ -32,8 +34,9 @@ private:
 
     Shader blockSelectionShader;
     Mesh blockSelectionMesh;
-
     void drawBlockSelection(glm::mat4 &projectionMat, glm::mat4 &viewMat) const;
+
+    void drawPlayer() const;
 };
 
 #endif

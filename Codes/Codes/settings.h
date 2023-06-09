@@ -3,6 +3,7 @@
 
 class Settings {
     friend class Controls;
+    friend class Game;
 
 public:
     bool isThirdPersonView() const;
@@ -16,7 +17,7 @@ private:
     bool wireframeMode = false;
     bool collisionEnabled = false;
     bool flying = true;
-    int loadDistance = 4;
+    int loadDistance = 6;
 };
 
 #endif

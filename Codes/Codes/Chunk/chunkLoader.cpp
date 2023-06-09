@@ -134,18 +134,22 @@ void ChunkLoader::loadChunk(IntPos chunkPos) {
 void ChunkLoader::loadChunkArea(ChunkLoadRequest request) {
     int numberOfChunksLoaded = 0;
 
-    for (int x = request.chunkPos.x - request.loadDistance; x <= request.chunkPos.x + request.loadDistance; x++) {
-        for (int y = request.chunkPos.y - request.loadDistance; y <= request.chunkPos.y + request.loadDistance; y++) {
-            for (int z = request.chunkPos.z - request.loadDistance; z <= request.chunkPos.z + request.loadDistance; z++) {
-                if (chunkLoaded(IntPos(x, y, z))) {
-                    continue;
-                }
+    for (int distance = 0; distance <= request.loadDistance; distance++) {
+        
+        for (int x = request.chunkPos.x - distance; x <= request.chunkPos.x + distance; x++) {
+            for (int y = request.chunkPos.y - distance; y <= request.chunkPos.y + distance; y++) {
+                for (int z = request.chunkPos.z - distance; z <= request.chunkPos.z + distance; z++) {
 
-                loadChunk(IntPos(x, y, z));
-                    
-                numberOfChunksLoaded++;
-                if (numberOfChunksLoaded >= chunkLoadCapPerFrame) {
-                    return;
+                    if (chunkLoaded(IntPos(x, y, z))) {
+                        continue;
+                    }
+
+                    loadChunk(IntPos(x, y, z));
+                        
+                    numberOfChunksLoaded++;
+                    if (numberOfChunksLoaded >= chunkLoadCapPerFrame) {
+                        return;
+                    }
                 }
             }
         }

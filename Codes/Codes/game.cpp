@@ -5,7 +5,9 @@
 #include <Codes/Types/intPos.h>
 #include <Codes/print.h>
 
-Game::Game(World &world): chunkLoader(world.chunkLoader) {}
+Game::Game(World &world): chunkLoader(world.chunkLoader) {
+    settings.loadDistance = 6;
+}
 
 void Game::update() {
     controls.update();

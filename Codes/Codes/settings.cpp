@@ -15,3 +15,7 @@ bool Settings::isCollisionEnabled() const {
 bool Settings::isFlying() const {
     return flying;
 }
+
+int Settings::getLoadDistance() const {
+    return loadDistance;
+}

@@ -9,12 +9,14 @@ public:
     bool isWireframeMode() const;
     bool isCollisionEnabled() const;
     bool isFlying() const;
+    int getLoadDistance() const;
 
 private:
     bool thirdPersonView = false;
     bool wireframeMode = false;
     bool collisionEnabled = false;
     bool flying = true;
+    int loadDistance = 4;
 };
 
 #endif

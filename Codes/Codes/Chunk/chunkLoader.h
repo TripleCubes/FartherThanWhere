@@ -3,6 +3,7 @@
 
 #include <unordered_map>
 #include <memory>
+#include <vector>
 #include <Codes/Types/intPos.h>
 #include <Codes/Chunk/chunk.h>
 
@@ -25,12 +26,24 @@ public:
     void placeBlock(IntPos blockPos);
     void breakBlock(IntPos blockPos);
 
+    struct ChunkLoadRequest {
+        IntPos chunkPos;
+        int loadDistance = 1;
+    };
+    void requestChunkLoad(ChunkLoadRequest request);
+
 private:
+    int chunkLoadCapPerFrame = 3;
+    
     std::unordered_map<IntPos, std::unique_ptr<Chunk>, IntPosHash> chunks;
 
     void loadChunk(IntPos chunkPos);
+    void loadChunkArea(ChunkLoadRequest request);
+    bool chunkShouldBeUnloaded(IntPos chunkPos);
     bool chunkLoaded(IntPos chunkPos) const;
     void requestUpdateSideChunkMeshes(IntPos chunkPos);
+
+    std::vector<ChunkLoadRequest> chunkLoadRequestList; 
 
     //
     FastNoise::SmartNode<FastNoise::FractalFBm> terrainHeightFractal;

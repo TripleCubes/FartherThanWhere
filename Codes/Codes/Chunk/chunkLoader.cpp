@@ -1,9 +1,7 @@
 #include <Codes/Chunk/chunkLoader.h>
 
+#include <cmath>
 #include <Codes/print.h>
-
-//
-#include <vector>
 
 std::size_t IntPosHash::operator () (const IntPos &pos) const {
     std::size_t hash1 = std::hash<int>{}(pos.x);
@@ -13,21 +11,31 @@ std::size_t IntPosHash::operator () (const IntPos &pos) const {
 }
 
 ChunkLoader::ChunkLoader() {
+    chunkLoadCapPerFrame = 3;
+
     auto terrainHeightSimplex = FastNoise::New<FastNoise::OpenSimplex2S>();
     terrainHeightFractal = FastNoise::New<FastNoise::FractalFBm>();
     terrainHeightFractal->SetSource(terrainHeightSimplex);
     terrainHeightFractal->SetOctaveCount(1);
-
-    for (int x = -4; x <= 4; x++) {
-        for (int z = -4; z <= 4; z++) {
-            for (int y = -1; y <= 1; y++) {
-                loadChunk(IntPos(x, y, z));
-            }
-        }
-    }
 }
 
 void ChunkLoader::update() {
+    for (ChunkLoadRequest request: chunkLoadRequestList) {
+        loadChunkArea(request);
+    }
+
+    for (auto i = chunks.begin(); i != chunks.end();) {
+        if (chunkShouldBeUnloaded(i->first)) {
+            i = chunks.erase(i);
+        } else {
+            ++i;
+        }
+    }
+
+    chunkLoadRequestList.clear();
+
+
+
     for (auto &chunk: chunks) {
         if (!chunk.second->isMeshUpdateRequested()) {
             continue;
@@ -71,6 +79,10 @@ void ChunkLoader::placeBlock(IntPos blockPos) {
     requestUpdateSideChunkMeshes(chunkPos);
 }
 
+void ChunkLoader::requestChunkLoad(ChunkLoadRequest request) {
+    chunkLoadRequestList.push_back(request);
+}
+
 void ChunkLoader::requestUpdateSideChunkMeshes(IntPos chunkPos) {
     // Can be optimized: Only update mesh of chunk next to the placed block
     std::array<IntPos, 6> dirs = {
@@ -109,8 +121,8 @@ void ChunkLoader::loadChunk(IntPos chunkPos) {
         IntPos blockPos = Chunk::indexToPos(i);
         float terrainHeight = terrainHeights[getTerrainHeightIndex(blockPos.x, blockPos.z)];
         terrainHeight = (terrainHeight+1)/2;
-        terrainHeight *= 16;
-        if (blockPos.y < terrainHeight) {
+        terrainHeight *= 50;
+        if (blockPos.y + chunkPos.y*CHUNK_WIDTH < terrainHeight) {
             chunkPtr->blocks[i] = true;
         }
     }
@@ -119,8 +131,44 @@ void ChunkLoader::loadChunk(IntPos chunkPos) {
     chunks.insert(std::make_pair(chunkPos, std::move(chunkPtr)));
 }
 
+void ChunkLoader::loadChunkArea(ChunkLoadRequest request) {
+    int numberOfChunksLoaded = 0;
+
+    for (int x = request.chunkPos.x - request.loadDistance; x <= request.chunkPos.x + request.loadDistance; x++) {
+        for (int y = request.chunkPos.y - request.loadDistance; y <= request.chunkPos.y + request.loadDistance; y++) {
+            for (int z = request.chunkPos.z - request.loadDistance; z <= request.chunkPos.z + request.loadDistance; z++) {
+                if (chunkLoaded(IntPos(x, y, z))) {
+                    continue;
+                }
+
+                loadChunk(IntPos(x, y, z));
+                    
+                numberOfChunksLoaded++;
+                if (numberOfChunksLoaded >= chunkLoadCapPerFrame) {
+                    return;
+                }
+            }
+        }
+    }
+}
+
+bool ChunkLoader::chunkShouldBeUnloaded(IntPos chunkPos) {
+    for (ChunkLoadRequest request: chunkLoadRequestList) {
+        if (
+            abs(chunkPos.x - request.chunkPos.x) > request.loadDistance ||
+            abs(chunkPos.y - request.chunkPos.y) > request.loadDistance ||
+            abs(chunkPos.z - request.chunkPos.z) > request.loadDistance
+        ) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 void ChunkLoader::updateChunkMesh(IntPos chunkPos, std::unique_ptr<Chunk> &chunkPtr) {
-    if (!chunkLoaded(chunkPos + IntPos( 0,  1,  0)) ||  // TOP
+    if (
+        !chunkLoaded(chunkPos + IntPos( 0,  1,  0)) ||  // TOP
         !chunkLoaded(chunkPos + IntPos( 0, -1,  0)) ||  // BOTTOM
         !chunkLoaded(chunkPos + IntPos(-1,  0,  0)) ||  // LEFT
         !chunkLoaded(chunkPos + IntPos( 1,  0,  0)) ||  // RIGHT

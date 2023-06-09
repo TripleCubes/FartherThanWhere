@@ -1,7 +1,7 @@
 #include <Codes/controls.h>
 
 #include <Codes/input.h>
-#include <Codes/view.h>
+#include <Codes/camera.h>
 #include <Codes/settings.h>
 #include <Codes/Types/vec2.h>
 #include <Codes/Types/vec3.h>
@@ -16,8 +16,8 @@ extern int currentWindowWidth;
 extern int currentWindowHeight;
 extern bool mouseLock;
 
-Controls::Controls(Settings &settings, View &view, ChunkLoader &chunkLoader, Player &player): 
-settings(settings), view(view), chunkLoader(chunkLoader), player(player) {}
+Controls::Controls(Settings &settings, Camera &camera, ChunkLoader &chunkLoader, Player &player): 
+settings(settings), camera(camera), chunkLoader(chunkLoader), player(player) {}
 
 void Controls::update() {
     updateSettings();
@@ -78,12 +78,12 @@ void Controls::updateCameraDir() {
     }
     cameraRotationY -= mouseMoveOffset.x * 0.17;
 
-    view.camera.setDir(Vec3(0, 0, -1).rotateXY(cameraRotationX, cameraRotationY));
+    camera.setDir(Vec3(0, 0, -1).rotateXY(cameraRotationX, cameraRotationY));
 }
 
 void Controls::updateMovements() {
     Vec3 moveDir(0, 0, 0);
-    Vec3 cameraDir = view.camera.getDir();
+    Vec3 cameraDir = camera.getDir();
     cameraDir.y = 0;
     cameraDir = cameraDir.normalize();
     Vec3 cameraDirRotated = cameraDir.rotateY(90);
@@ -119,14 +119,14 @@ void Controls::updateMovements() {
 
 void Controls::placeBreakBlock() {
     if (Input::justPressed(MouseButton::LEFT)) {
-        const BlockRaycast::Result &blockRaycastResult = view.camera.getBlockRaycastResult();
+        const BlockRaycast::Result &blockRaycastResult = camera.getBlockRaycastResult();
         if (blockRaycastResult.found) {
             chunkLoader.breakBlock(blockRaycastResult.selectedPos);
         }
     }
 
     if (Input::justPressed(MouseButton::RIGHT)) {
-        const BlockRaycast::Result &blockRaycastResult = view.camera.getBlockRaycastResult();
+        const BlockRaycast::Result &blockRaycastResult = camera.getBlockRaycastResult();
         if (blockRaycastResult.hasPlacingPos) {
             chunkLoader.placeBlock(blockRaycastResult.placingPos);
         }

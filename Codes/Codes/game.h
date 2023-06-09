@@ -19,11 +19,12 @@ public:
 private:
     ChunkLoader &chunkLoader;
 
-    Controls controls = Controls(settings, view, chunkLoader, player);
+    Controls controls = Controls(settings, camera, chunkLoader, player);
     Settings settings;
-    View view = View(settings, chunkLoader, player);
+    View view = View(settings, camera, chunkLoader, player);
     Intervals intervals;
     Player player = Player(settings, chunkLoader);
+    Camera camera = Camera(chunkLoader, player);
 };
 
 #endif

@@ -2,6 +2,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <Codes/Chunk/chunkLoader.h>
+#include <Codes/camera.h>
 #include <Codes/settings.h>
 #include <Codes/Entities/player.h>
 #include <Codes/Types/vec3.h>
@@ -13,8 +14,8 @@
 extern int currentWindowWidth;
 extern int currentWindowHeight;
 
-View::View(const Settings &settings, const ChunkLoader &chunkLoader, const Player &player): 
-settings(settings), chunkLoader(chunkLoader), player(player) {
+View::View(const Settings &settings, const Camera &camera, const ChunkLoader &chunkLoader, const Player &player): 
+settings(settings), camera(camera), chunkLoader(chunkLoader), player(player) {
     viewShader.init("Shaders/View/view");
 
     blockSelectionShader.init("Shaders/View/blockSelection");
@@ -46,9 +47,7 @@ settings(settings), chunkLoader(chunkLoader), player(player) {
     blockSelectionMesh.set3d(blockSelectionVerticies, blockSelectionIndicies, true);
 }
 
-void View::update() {
-    camera.update();
-}
+void View::update() {}
 
 void View::draw() const {
     glm::mat4 projectionMat = glm::perspective(glm::radians(70.0f), 
@@ -90,7 +89,7 @@ void View::drawChunks(glm::mat4 &projectionMat, glm::mat4 &viewMat) const {
 
     viewShader.useProgram();
 
-    for (const auto &i: chunkLoader.chunks) {
+    for (const auto &i: chunkLoader.getChunkList()) {
         Vec3 pos = Vec3(i.first) * CHUNK_WIDTH;
         glm::mat4 modelMat = glm::mat4(1.0f);
         modelMat = glm::translate(modelMat, pos.toGlmVec3());

@@ -5,7 +5,7 @@
 //
 #include <vector>
 
-std::size_t ChunkLoader::IntPosHash::operator () (const IntPos &pos) const {
+std::size_t IntPosHash::operator () (const IntPos &pos) const {
     std::size_t hash1 = std::hash<int>{}(pos.x);
     std::size_t hash2 = std::hash<int>{}(pos.y);
     std::size_t hash3 = std::hash<int>{}(pos.z);
@@ -35,6 +35,10 @@ void ChunkLoader::update() {
 
         updateChunkMesh(chunk.first, chunk.second);
     }
+}
+
+const std::unordered_map<IntPos, std::unique_ptr<Chunk>, IntPosHash> &ChunkLoader::getChunkList() const {
+    return chunks;
 }
 
 bool ChunkLoader::getBlock(IntPos blockPos) const {

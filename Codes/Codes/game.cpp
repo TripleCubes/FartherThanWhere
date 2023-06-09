@@ -9,6 +9,7 @@ void Game::update() {
     controls.update();
 
     player.update();
+    camera.update();
     view.update();
 
     intervals.updateIntervals();

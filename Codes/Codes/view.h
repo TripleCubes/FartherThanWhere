@@ -9,12 +9,11 @@ class ChunkLoader;
 class Settings;
 class Vec3;
 class Player;
+class Camera;
 
 class View {
-    friend class Controls;
-
 public:
-    View(const Settings &settings, const ChunkLoader &chunkLoader, const Player &player);
+    View(const Settings &settings, const Camera &camera, const ChunkLoader &chunkLoader, const Player &player);
     
     void update();
 
@@ -24,10 +23,10 @@ public:
     
 private:
     const Settings &settings;
+    const Camera &camera;
     const ChunkLoader &chunkLoader;
     const Player &player;
 
-    Camera camera = Camera(chunkLoader, player);
     Shader viewShader;
 
     void drawChunks(glm::mat4 &projectionMat, glm::mat4 &viewMat) const;

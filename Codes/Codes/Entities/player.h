@@ -9,14 +9,15 @@ class Settings;
 class ChunkLoader;
 
 class Player {
-    friend class Controls;
-
 public:
     Player(const Settings &settings, const ChunkLoader& chunkLoader);
 
     Vec3 getPos() const;
     void update();
     void draw() const;
+
+    void move(Vec3 dir);
+    void jump();
 
     ~Player();
     
@@ -34,8 +35,6 @@ private:
         X, Y, Z,
     };
     float moveSpeed = 0.2;
-    void move(Vec3 dir);
-    void jump();
     
     void moveAxis(float moveAmount, Axis axis);
 

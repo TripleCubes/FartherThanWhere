@@ -6,6 +6,7 @@
 #include <Codes/settings.h>
 #include <Codes/Entities/player.h>
 #include <Codes/Types/vec3.h>
+#include <Codes/Types/color.h>
 #include <Codes/Raycast/blockRaycast.h>
 
 #include <glad/glad.h>
@@ -16,9 +17,9 @@ extern int currentWindowHeight;
 
 View::View(const Settings &settings, const Camera &camera, const ChunkLoader &chunkLoader, const Player &player): 
 settings(settings), camera(camera), chunkLoader(chunkLoader), player(player) {
-    viewShader.init("Shaders/View/view");
+    shader_view.init("Shaders/View/view");
 
-    blockSelectionShader.init("Shaders/View/blockSelection");
+    shader_boxFrame.init("Shaders/View/boxFrame");
 
     std::vector<float> blockSelectionVerticies = {
         0, 1, 0, // A 0
@@ -44,7 +45,7 @@ settings(settings), camera(camera), chunkLoader(chunkLoader), player(player) {
         6, 7,
         7, 4
     };
-    blockSelectionMesh.set3d(blockSelectionVerticies, blockSelectionIndicies, true);
+    mesh_boxFrame.set3d(blockSelectionVerticies, blockSelectionIndicies, true);
 }
 
 void View::update() {}
@@ -64,54 +65,76 @@ void View::draw() const {
                                 glm::vec3(0.0f, 1.0f, 0.0f));
     }
 
-    viewShader.useProgram();
-    viewShader.setUniform("projectionMat", projectionMat);
-    viewShader.setUniform("viewMat", viewMat);
+    shader_view.useProgram();
+    shader_view.setUniform("projectionMat", projectionMat);
+    shader_view.setUniform("viewMat", viewMat);
 
-    blockSelectionShader.useProgram();
-    blockSelectionShader.setUniform("projectionMat", projectionMat);
-    blockSelectionShader.setUniform("viewMat", viewMat);
+    shader_boxFrame.useProgram();
+    shader_boxFrame.setUniform("projectionMat", projectionMat);
+    shader_boxFrame.setUniform("viewMat", viewMat);
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
 
-    drawChunks(projectionMat, viewMat);
-    drawBlockSelection(projectionMat, viewMat);
+    drawChunks();
+    drawChunkInformations();
+    drawBlockSelection();
     drawPlayer();
 }
 
-void View::drawChunks(glm::mat4 &projectionMat, glm::mat4 &viewMat) const {
+void View::drawChunks() const {
     if (settings.isWireframeMode())
     {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     }
 
-    viewShader.useProgram();
+    shader_view.useProgram();
 
     for (const auto &i: chunkLoader.getChunkList()) {
         Vec3 pos = Vec3(i.first) * CHUNK_WIDTH;
         glm::mat4 modelMat = glm::mat4(1.0f);
         modelMat = glm::translate(modelMat, pos.toGlmVec3());
-        viewShader.setUniform("modelMat", modelMat);
+        shader_view.setUniform("modelMat", modelMat);
         i.second->draw();
     }
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
-void View::drawBlockSelection(glm::mat4 &projectionMat, glm::mat4 &viewMat) const {
+void View::drawChunkInformations() const {
+    if (!settings.isShowingChunkInformations()) {
+        return;
+    }
+
+    glm::mat4 modelMat = glm::mat4(1.0f);
+    modelMat = glm::translate(modelMat, Vec3(IntPos(player.getPos()).getChunkPos() * CHUNK_WIDTH).toGlmVec3());
+    shader_boxFrame.useProgram();
+    shader_boxFrame.setUniform("modelMat", modelMat);
+    shader_boxFrame.setUniform("boxSize", Vec3(CHUNK_WIDTH, CHUNK_WIDTH, CHUNK_WIDTH));
+    shader_boxFrame.setUniform("boxMargin", Vec3(0, 0, 0));
+    shader_boxFrame.setUniform("frameColor", Color(0.8, 1, 0.92, 1));
+
+    glLineWidth(2);
+    mesh_boxFrame.draw();
+    glLineWidth(1);
+}
+
+void View::drawBlockSelection() const {
     if (settings.isThirdPersonView() || !camera.getBlockRaycastResult().found) {
         return;
     }
     
     glm::mat4 modelMat = glm::mat4(1.0f);
     modelMat = glm::translate(modelMat, Vec3(camera.getBlockRaycastResult().selectedPos).toGlmVec3());
-    blockSelectionShader.useProgram();
-    blockSelectionShader.setUniform("modelMat", modelMat);
+    shader_boxFrame.useProgram();
+    shader_boxFrame.setUniform("modelMat", modelMat);
+    shader_boxFrame.setUniform("boxSize", Vec3(1, 1, 1));
+    shader_boxFrame.setUniform("boxMargin", Vec3(0, 0, 0));
+    shader_boxFrame.setUniform("frameColor", Color(0, 0, 0, 1));
 
     glLineWidth(2);
-    blockSelectionMesh.draw();
+    mesh_boxFrame.draw();
     glLineWidth(1);
 }
 
@@ -122,15 +145,15 @@ void View::drawPlayer() const {
 
     glm::mat4 modelMat = glm::mat4(1.0f);
     modelMat = glm::translate(modelMat, player.getPos().toGlmVec3());
-    viewShader.useProgram();
-    viewShader.setUniform("modelMat", modelMat);
+    shader_view.useProgram();
+    shader_view.setUniform("modelMat", modelMat);
 
     player.draw();
 }
 
 View::~View() {
-    viewShader.release();
+    shader_view.release();
 
-    blockSelectionShader.release();
-    blockSelectionMesh.release();
+    shader_boxFrame.release();
+    mesh_boxFrame.release();
 }

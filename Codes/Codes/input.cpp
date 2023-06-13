@@ -31,6 +31,7 @@ void Input::init() {
     addKey("M", GLFW_KEY_M);
     addKey("N", GLFW_KEY_N);
     addKey("F", GLFW_KEY_F);
+    addKey("B", GLFW_KEY_B);
     
     addKey("W", GLFW_KEY_W);
     addKey("A", GLFW_KEY_A);

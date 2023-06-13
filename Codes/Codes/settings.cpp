@@ -19,3 +19,7 @@ bool Settings::isFlying() const {
 int Settings::getLoadDistance() const {
     return loadDistance;
 }
+
+bool Settings::isShowingChunkInformations() const {
+    return showingChunkInformations;
+}

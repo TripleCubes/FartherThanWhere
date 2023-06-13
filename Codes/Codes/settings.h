@@ -11,6 +11,7 @@ public:
     bool isCollisionEnabled() const;
     bool isFlying() const;
     int getLoadDistance() const;
+    bool isShowingChunkInformations() const;
 
 private:
     bool thirdPersonView = false;
@@ -18,6 +19,7 @@ private:
     bool collisionEnabled = false;
     bool flying = true;
     int loadDistance = 6;
+    bool showingChunkInformations = false;
 };
 
 #endif

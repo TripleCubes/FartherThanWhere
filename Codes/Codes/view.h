@@ -27,13 +27,15 @@ private:
     const ChunkLoader &chunkLoader;
     const Player &player;
 
-    Shader viewShader;
+    Shader shader_view;
 
-    void drawChunks(glm::mat4 &projectionMat, glm::mat4 &viewMat) const;
+    void drawChunks() const;
 
-    Shader blockSelectionShader;
-    Mesh blockSelectionMesh;
-    void drawBlockSelection(glm::mat4 &projectionMat, glm::mat4 &viewMat) const;
+    void drawChunkInformations() const;
+
+    Shader shader_boxFrame;
+    Mesh mesh_boxFrame;
+    void drawBlockSelection() const;
 
     void drawPlayer() const;
 };

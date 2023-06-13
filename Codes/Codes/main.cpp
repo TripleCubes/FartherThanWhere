@@ -86,8 +86,9 @@ int main() {
             glfwPollEvents();
             Input::update();
 
-            world.update();
             game.update();
+            world.update();
+            
             game.draw();
             UI::draw();
             glfwSwapBuffers(glfwWindow);

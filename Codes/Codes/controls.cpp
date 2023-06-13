@@ -58,6 +58,10 @@ void Controls::updateSettings() {
             glfwSetCursorPos(glfwWindow, (double)currentWindowWidth/2, (double)currentWindowHeight/2);
         }
     }
+
+    if (Input::justPressed("B")) {
+        settings.showingChunkInformations = !settings.showingChunkInformations;
+    }
 }
 
 void Controls::updateCameraDir() {

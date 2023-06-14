@@ -6,6 +6,9 @@
 #include <Codes/input.h>
 #include <Codes/Time/time.h>
 #include <Codes/UI/ui.h>
+
+#include <Codes/GraphicEffects/boxBlur.h>
+
 #include <Codes/print.h>
 
 extern GLFWwindow *glfwWindow;
@@ -77,6 +80,8 @@ int main() {
         Input::init();
         UI::init();
 
+        GraphicEffects::BoxBlur::init();
+
         World world;
         Game game(world);
 
@@ -96,6 +101,8 @@ int main() {
             Time::syncFrame();
             Time::update();
         }
+
+        GraphicEffects::BoxBlur::release();
 
         UI::release();
     }

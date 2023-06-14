@@ -12,12 +12,28 @@
 #include <glad/glad.h>
 #include <Codes/print.h>
 
+//
+#include <Codes/GraphicEffects/boxBlur.h>
+
 extern int currentWindowWidth;
 extern int currentWindowHeight;
 
 View::View(const Settings &settings, const Camera &camera, const ChunkLoader &chunkLoader, const Player &player): 
 settings(settings), camera(camera), chunkLoader(chunkLoader), player(player) {
     shader_view.init("Shaders/View/view");
+    framebuffer_view.init();
+
+    std::vector<float> windowRectVerticies = {
+        -1,  1,
+         1,  1,
+        -1, -1,
+        
+         1,  1,
+         1, -1,
+        -1, -1
+    };
+    mesh_windowRect.set2d(windowRectVerticies);
+    shader_windowRect.init("Shaders/windowRect");
 
     shader_boxFrame.init("Shaders/View/boxFrame");
 
@@ -73,6 +89,7 @@ void View::draw() const {
     shader_boxFrame.setUniform("projectionMat", projectionMat);
     shader_boxFrame.setUniform("viewMat", viewMat);
 
+    framebuffer_view.bind();
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
@@ -81,6 +98,18 @@ void View::draw() const {
     drawChunkInformations();
     drawBlockSelection();
     drawPlayer();
+
+    GraphicEffects::BoxBlur::createBlurTexture(framebuffer_view.getTextureId(), 5, 2);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDisable(GL_DEPTH_TEST);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+    shader_windowRect.useProgram();
+    shader_windowRect.setUniform("texture", GraphicEffects::BoxBlur::getBlurredTexture(), 0);
+    mesh_windowRect.draw();
 }
 
 void View::drawChunks() const {

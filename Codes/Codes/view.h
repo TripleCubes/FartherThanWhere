@@ -3,6 +3,7 @@
 
 #include <Codes/GraphicTypes/shader.h>
 #include <Codes/GraphicTypes/mesh.h>
+#include <Codes/GraphicTypes/framebuffer.h>
 #include <Codes/camera.h>
 #include <glm/glm.hpp>
 class ChunkLoader;
@@ -28,6 +29,10 @@ private:
     const Player &player;
 
     Shader shader_view;
+    Framebuffer framebuffer_view;
+    
+    Mesh mesh_windowRect;
+    Shader shader_windowRect;
 
     void drawChunks() const;
 

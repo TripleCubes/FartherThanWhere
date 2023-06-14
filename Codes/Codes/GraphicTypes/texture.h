@@ -7,7 +7,7 @@ class Texture {
 public:
     Texture();
     
-    void init(const std::string &path, bool isLinearFilter = false);
+    void init(const std::string &path);
     unsigned int getTextureId() const;
     int getWidth() const;
     int getHeight() const;

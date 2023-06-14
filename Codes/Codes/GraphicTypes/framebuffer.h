@@ -5,7 +5,7 @@ class Framebuffer {
 public:
     Framebuffer();
     
-    void init(bool multisample = false, bool linearFilter = false, int width = 0, int height = 0);
+    void init(int width = 0, int height = 0);
     void bind() const;
     unsigned int getFBO() const;
     unsigned int getTextureId() const;
@@ -19,7 +19,6 @@ private:
     unsigned int FBO;
     unsigned int textureId;
     unsigned int RBO;
-    bool isMultisample = false;
     bool initialized = false;
     bool released = false;
 };

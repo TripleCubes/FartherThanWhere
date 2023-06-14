@@ -99,7 +99,7 @@ void View::draw() const {
     drawBlockSelection();
     drawPlayer();
 
-    GraphicEffects::BoxBlur::createBlurTexture(framebuffer_view.getTextureId(), 5, 2);
+    // GraphicEffects::BoxBlur::createBlurTexture(framebuffer_view.getTextureId(), 5, 2);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -108,7 +108,7 @@ void View::draw() const {
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     shader_windowRect.useProgram();
-    shader_windowRect.setUniform("texture", GraphicEffects::BoxBlur::getBlurredTexture(), 0);
+    shader_windowRect.setUniform("texture", framebuffer_view.getTextureId(), 0);
     mesh_windowRect.draw();
 }
 

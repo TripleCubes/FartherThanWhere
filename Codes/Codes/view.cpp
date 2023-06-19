@@ -18,22 +18,19 @@
 extern int currentWindowWidth;
 extern int currentWindowHeight;
 
+namespace GlobalGraphics {
+    extern Mesh mesh_windowRect;
+    extern Shader shader_windowRect;
+}
+
+Shader View::shader_view;
+Shader View::shader_boxFrame;
+Mesh View::mesh_boxFrame;
+
 View::View(const Settings &settings, const Camera &camera, const ChunkLoader &chunkLoader, const Player &player): 
 settings(settings), camera(camera), chunkLoader(chunkLoader), player(player) {
     shader_view.init("Shaders/View/view");
     framebuffer_view.init();
-
-    std::vector<float> windowRectVerticies = {
-        -1,  1,
-         1,  1,
-        -1, -1,
-        
-         1,  1,
-         1, -1,
-        -1, -1
-    };
-    mesh_windowRect.set2d(windowRectVerticies);
-    shader_windowRect.init("Shaders/windowRect");
 
     shader_boxFrame.init("Shaders/View/boxFrame");
 
@@ -61,7 +58,7 @@ settings(settings), camera(camera), chunkLoader(chunkLoader), player(player) {
         6, 7,
         7, 4
     };
-    mesh_boxFrame.set3d(blockSelectionVerticies, blockSelectionIndicies, true);
+    mesh_boxFrame.init3d(blockSelectionVerticies, blockSelectionIndicies, true);
 }
 
 void View::update() {}
@@ -107,9 +104,9 @@ void View::draw() const {
     glDisable(GL_DEPTH_TEST);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-    shader_windowRect.useProgram();
-    shader_windowRect.setUniform("texture", framebuffer_view.getTextureId(), 0);
-    mesh_windowRect.draw();
+    GlobalGraphics::shader_windowRect.useProgram();
+    GlobalGraphics::shader_windowRect.setUniform("texture", framebuffer_view.getTextureId(), 0);
+    GlobalGraphics::mesh_windowRect.draw();
 }
 
 void View::drawChunks() const {
@@ -182,6 +179,7 @@ void View::drawPlayer() const {
 
 View::~View() {
     shader_view.release();
+    framebuffer_view.release();
 
     shader_boxFrame.release();
     mesh_boxFrame.release();

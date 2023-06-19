@@ -28,20 +28,15 @@ private:
     const ChunkLoader &chunkLoader;
     const Player &player;
 
-    Shader shader_view;
+    static Shader shader_view;
     Framebuffer framebuffer_view;
     
-    Mesh mesh_windowRect;
-    Shader shader_windowRect;
+    static Shader shader_boxFrame;
+    static Mesh mesh_boxFrame;
 
     void drawChunks() const;
-
     void drawChunkInformations() const;
-
-    Shader shader_boxFrame;
-    Mesh mesh_boxFrame;
     void drawBlockSelection() const;
-
     void drawPlayer() const;
 };
 

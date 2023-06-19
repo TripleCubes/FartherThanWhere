@@ -8,10 +8,10 @@
 extern int currentWindowWidth;
 extern int currentWindowHeight;
 
-Mesh UI::rectMesh;
-Shader UI::rectShader;
+Mesh UI::mesh_rect;
+Shader UI::shader_rect;
 
-Texture UI::crosshairTexture;
+Texture UI::texture_crosshair;
 
 void UI::init() {
     std::vector<float> rectVerticies = {
@@ -23,21 +23,21 @@ void UI::init() {
         1, 0,
         0, 0,
     };
-    rectMesh.set2d(rectVerticies);
+    mesh_rect.init2d(rectVerticies);
 
-    rectShader.init("Shaders/UI/rect");
-    rectShader.useProgram();
-    rectShader.setUniform("windowSize", Vec2((float)currentWindowWidth, (float)currentWindowHeight));
+    shader_rect.init("Shaders/UI/rect");
+    shader_rect.useProgram();
+    shader_rect.setUniform("windowSize", Vec2((float)currentWindowWidth, (float)currentWindowHeight));
 
 
 
-    crosshairTexture.init("Textures/UI/crosshair.png");
+    texture_crosshair.init("Textures/UI/crosshair.png");
 }
 
 void UI::draw() {
     drawTexture(currentWindowWidth/2, currentWindowHeight/2, 
-                crosshairTexture.getWidth(), crosshairTexture.getHeight(), 
-                crosshairTexture, true);
+                texture_crosshair.getWidth(), texture_crosshair.getHeight(), 
+                texture_crosshair, true);
 }
 
 void UI::drawRectPos(float x1, float y1, float x2, float y2, Color color) {
@@ -56,13 +56,13 @@ void UI::drawRectPos(float x1, float y1, float x2, float y2, Color color) {
     y1 = currentWindowHeight - y2;
     y2 = currentWindowHeight - y3;
 
-    rectShader.useProgram();
-    rectShader.setUniform("rectPos", Vec2(x1, y1));
-    rectShader.setUniform("rectSize", Vec2(x2 - x1, y2 - y1));
-    rectShader.setUniform("drawTexture", false);
-    rectShader.setUniform("rectColor", color);
+    shader_rect.useProgram();
+    shader_rect.setUniform("rectPos", Vec2(x1, y1));
+    shader_rect.setUniform("rectSize", Vec2(x2 - x1, y2 - y1));
+    shader_rect.setUniform("drawTexture", false);
+    shader_rect.setUniform("rectColor", color);
 
-    rectMesh.draw();
+    mesh_rect.draw();
 }
 
 void UI::drawRectWH(float x, float y, float w, float h, Color color) {
@@ -96,18 +96,18 @@ void UI::drawTexture(float x, float y, float w, float h, const Texture &texture,
         y -= h/2;
     }
 
-    rectShader.useProgram();
-    rectShader.setUniform("rectPos", Vec2(x, y));
-    rectShader.setUniform("rectSize", Vec2(w, h));
-    rectShader.setUniform("drawTexture", true);
-    rectShader.setUniform("rectTexture", texture, 0);
+    shader_rect.useProgram();
+    shader_rect.setUniform("rectPos", Vec2(x, y));
+    shader_rect.setUniform("rectSize", Vec2(w, h));
+    shader_rect.setUniform("drawTexture", true);
+    shader_rect.setUniform("rectTexture", texture, 0);
 
-    rectMesh.draw();
+    mesh_rect.draw();
 }
 
 void UI::release() {
-    rectMesh.release();
-    rectShader.release();
+    mesh_rect.release();
+    shader_rect.release();
 
-    crosshairTexture.release();
+    texture_crosshair.release();
 }

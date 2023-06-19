@@ -24,7 +24,7 @@ public:
 private:
     const Settings &settings;
     const ChunkLoader &chunkLoader;
-    Mesh mesh;
+    static Mesh mesh;
 
     Vec3 pos = Vec3(0, 0, 0);
     void setPos(Vec3 pos);

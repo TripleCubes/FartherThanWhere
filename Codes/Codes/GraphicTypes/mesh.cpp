@@ -5,6 +5,38 @@
 
 Mesh::Mesh() {}
 
+void Mesh::init3d(const std::vector<float> &verticies, bool drawLine) {
+    if (VAOInitialized) {
+        return;
+    }
+
+    set3d(verticies, drawLine);
+}
+
+void Mesh::init3d(const std::vector<float> &verticies, const std::vector<unsigned int> &indicies, bool drawLine) {
+    if (VAOInitialized) {
+        return;
+    }
+
+    set3d(verticies, indicies, drawLine);
+}
+
+void Mesh::init2d(const std::vector<float> &verticies, bool drawLine) {
+    if (VAOInitialized) {
+        return;
+    }
+
+    set2d(verticies, drawLine);
+}
+
+void Mesh::init2d(const std::vector<float> &verticies, const std::vector<unsigned int> &indicies, bool drawLine) {
+    if (VAOInitialized) {
+        return;
+    }
+
+    set2d(verticies, indicies, drawLine);
+}
+
 void Mesh::set3d(const std::vector<float> &verticies, bool drawLine) {
     if (released) {
         PRINTLN("cant set released mesh");
@@ -190,6 +222,10 @@ void Mesh::draw() const {
 }
 
 void Mesh::release() {
+    if (released) {
+        return;
+    }
+
     if (!VAOInitialized) {
         PRINTLN("cant release uninitialized mesh");
         return;

@@ -7,6 +7,8 @@
 #include <cmath>
 #include <Codes/print.h>
 
+Mesh Player::mesh;
+
 Player::Player(const Settings &settings, const ChunkLoader &chunkLoader): 
 settings(settings), chunkLoader(chunkLoader) {
     std::vector<float> playerVerticies = {
@@ -59,7 +61,7 @@ settings(settings), chunkLoader(chunkLoader) {
         -0.5,    0, -0.5,    0,    0,   -1,    1,    0, // E
          0.5,    0, -0.5,    0,    0,   -1,    0,    0, // F
     };
-    mesh.set3d(playerVerticies);
+    mesh.init3d(playerVerticies);
 
     pos = Vec3(0, 30, 0);
 

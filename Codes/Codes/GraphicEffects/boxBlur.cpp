@@ -3,24 +3,16 @@
 #include <Codes/GraphicTypes/texture.h>
 #include <glad/glad.h>
 
+namespace GlobalGraphics {
+    extern Mesh mesh_windowRect;
+}
+
 Shader GraphicEffects::BoxBlur::shader_blur;
-Mesh GraphicEffects::BoxBlur::mesh_windowRect;
 Framebuffer GraphicEffects::BoxBlur::framebuffer_horizontalBlurred;
 Framebuffer GraphicEffects::BoxBlur::framebuffer_blurred;
 
 void GraphicEffects::BoxBlur::init() {
     shader_blur.init("Shaders/Effects/boxBlur");
-
-    std::vector<float> windowRectVerticies = {
-        -1,  1,
-         1,  1,
-        -1, -1,
-        
-         1,  1,
-         1, -1,
-        -1, -1,
-    };
-    mesh_windowRect.set2d(windowRectVerticies);
 
     framebuffer_horizontalBlurred.init();
     framebuffer_blurred.init();
@@ -50,7 +42,7 @@ void GraphicEffects::BoxBlur::createBlurTexture1Time(unsigned int inputTextureId
     shader_blur.useProgram();
     shader_blur.setUniform("horizontal", true);
     shader_blur.setUniform("texture", inputTextureId, 0);
-    mesh_windowRect.draw();
+    GlobalGraphics::mesh_windowRect.draw();
 
     framebuffer_blurred.bind();
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -60,7 +52,7 @@ void GraphicEffects::BoxBlur::createBlurTexture1Time(unsigned int inputTextureId
 
     shader_blur.setUniform("horizontal", false);
     shader_blur.setUniform("texture", framebuffer_horizontalBlurred.getTextureId(), 0);
-    mesh_windowRect.draw();
+    GlobalGraphics::mesh_windowRect.draw();
 }
 
 unsigned int GraphicEffects::BoxBlur::getBlurredTexture() {
@@ -69,7 +61,6 @@ unsigned int GraphicEffects::BoxBlur::getBlurredTexture() {
 
 void GraphicEffects::BoxBlur::release() {
     shader_blur.release();
-    mesh_windowRect.release();
     framebuffer_horizontalBlurred.release();
     framebuffer_blurred.release();
 }

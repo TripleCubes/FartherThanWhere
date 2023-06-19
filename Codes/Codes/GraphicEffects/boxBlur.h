@@ -19,7 +19,6 @@ namespace GraphicEffects {
 
     private:
         static Shader shader_blur;
-        static Mesh mesh_windowRect;
         static Framebuffer framebuffer_horizontalBlurred;
         static Framebuffer framebuffer_blurred;
 

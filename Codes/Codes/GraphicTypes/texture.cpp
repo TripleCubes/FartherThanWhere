@@ -7,6 +7,10 @@
 Texture::Texture() {}
 
 void Texture::init(const std::string &path) {
+    if (initialized) {
+        return;
+    }
+
     glGenTextures(1, &textureId);
     glBindTexture(GL_TEXTURE_2D, textureId);
 
@@ -67,6 +71,10 @@ int Texture::getHeight() const {
 }
 
 void Texture::release() {
+    if (released) {
+        return;
+    }
+    
     if (!initialized) {
         PRINTLN("cant release uninitialized texture");
         return;

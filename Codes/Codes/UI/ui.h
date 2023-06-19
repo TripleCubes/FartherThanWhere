@@ -16,10 +16,10 @@ public:
     static void release();
 
 private:
-    static Mesh rectMesh;
-    static Shader rectShader;
+    static Mesh mesh_rect;
+    static Shader shader_rect;
 
-    static Texture crosshairTexture;
+    static Texture texture_crosshair;
 
     static void drawRectPos(float x1, float y1, float x2, float y2, Color color);
     static void drawRectWH(float x, float y, float w, float h, Color color);

@@ -64,12 +64,20 @@ void linkShaderProgram(unsigned int shaderProgram, const std::string &vertexShad
 Shader::Shader() {}
 
 void Shader::init(const std::string &vertexShaderPath, const std::string &fragmentShaderPath) {
+    if (initialized) {
+        return;
+    }
+
     shaderId = glCreateProgram();
     linkShaderProgram(shaderId, vertexShaderPath, fragmentShaderPath);
     initialized = true;
 }
 
 void Shader::init(const std::string &shaderPath) {
+    if (initialized) {
+        return;
+    }
+
     shaderId = glCreateProgram();
     linkShaderProgram(shaderId, shaderPath + "_vertex.glsl", shaderPath + "_fragment.glsl");
     initialized = true;
@@ -198,6 +206,10 @@ void Shader::setUniform(const std::string &uniformName, unsigned int textureId, 
 }
 
 void Shader::release() {
+    if (released) {
+        return;
+    }
+    
     if (!initialized) {
         PRINTLN("cant release uninitialized shader");
         return;

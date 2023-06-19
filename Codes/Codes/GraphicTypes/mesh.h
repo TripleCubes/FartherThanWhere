@@ -7,6 +7,11 @@ class Mesh {
 public:
     Mesh();
 
+    void init3d(const std::vector<float> &verticies, bool drawLine = false);
+    void init3d(const std::vector<float> &verticies, const std::vector<unsigned int> &indicies, bool drawLine = false);
+    void init2d(const std::vector<float> &verticies, bool drawLine = false);
+    void init2d(const std::vector<float> &verticies, const std::vector<unsigned int> &indicies, bool drawLine = false);
+
     void set3d(const std::vector<float> &verticies, bool drawLine = false);
     void set3d(const std::vector<float> &verticies, const std::vector<unsigned int> &indicies, bool drawLine = false);
     void set2d(const std::vector<float> &verticies, bool drawLine = false);

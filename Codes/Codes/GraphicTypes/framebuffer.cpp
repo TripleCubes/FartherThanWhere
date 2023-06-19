@@ -9,6 +9,10 @@ extern int currentWindowHeight;
 Framebuffer::Framebuffer() {}
 
 void Framebuffer::init(int width, int height) {
+    if (initialized) {
+        return;
+    }
+
     if (width == 0) {
         width = currentWindowWidth;
     }
@@ -112,6 +116,10 @@ void Framebuffer::resize(int width, int height) {
 }
 
 void Framebuffer::release() {
+    if (released) {
+        return;
+    }
+    
     if (!initialized) {
         PRINTLN("cant release uninitialized frame buffer");
         return;

@@ -16,6 +16,11 @@ extern int currentWindowWidth;
 extern int currentWindowHeight;
 extern bool mouseLock;
 
+namespace GlobalGraphics {
+    void init();
+    void release();
+}
+
 float lastMousePosX = 0;
 float lastMousePosY = 0;
 bool resetMouseMoveOffset = true;
@@ -80,6 +85,8 @@ int main() {
         Input::init();
         UI::init();
 
+        GlobalGraphics::init();
+
         GraphicEffects::BoxBlur::init();
 
         World world;
@@ -103,6 +110,8 @@ int main() {
         }
 
         GraphicEffects::BoxBlur::release();
+
+        GlobalGraphics::release();
 
         UI::release();
     }

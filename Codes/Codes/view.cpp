@@ -23,12 +23,16 @@ namespace GlobalGraphics {
     extern Shader shader_windowRect;
 }
 
+Shader View::shader_gBuffer;
 Shader View::shader_view;
 Shader View::shader_boxFrame;
 Mesh View::mesh_boxFrame;
 
 View::View(const Settings &settings, const Camera &camera, const ChunkLoader &chunkLoader, const Player &player): 
 settings(settings), camera(camera), chunkLoader(chunkLoader), player(player) {
+    shader_gBuffer.init("Shaders/View/gBuffer");
+    framebuffer_gBuffer.init(0, 0, 3);
+
     shader_view.init("Shaders/View/view");
     framebuffer_view.init();
 
@@ -78,32 +82,44 @@ void View::draw() const {
                                 glm::vec3(0.0f, 1.0f, 0.0f));
     }
 
-    shader_view.useProgram();
-    shader_view.setUniform("projectionMat", projectionMat);
-    shader_view.setUniform("viewMat", viewMat);
+    shader_gBuffer.useProgram();
+    shader_gBuffer.setUniform("projectionMat", projectionMat);
+    shader_gBuffer.setUniform("viewMat", viewMat);
 
     shader_boxFrame.useProgram();
     shader_boxFrame.setUniform("projectionMat", projectionMat);
     shader_boxFrame.setUniform("viewMat", viewMat);
 
-    framebuffer_view.bind();
+    framebuffer_gBuffer.bind();
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
-
     drawChunks();
-    drawChunkInformations();
-    drawBlockSelection();
     drawPlayer();
 
-    // GraphicEffects::BoxBlur::createBlurTexture(framebuffer_view.getTextureId(), 5, 2);
+    framebuffer_view.bind();
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDisable(GL_DEPTH_TEST);
+    shader_view.useProgram();
+    shader_view.setUniform("gBuffer_pos", framebuffer_gBuffer.getTextureId(GBUFFER_POS), GBUFFER_POS);
+    shader_view.setUniform("gBuffer_normal", framebuffer_gBuffer.getTextureId(GBUFFER_NORMAL), GBUFFER_NORMAL);
+    shader_view.setUniform("gBuffer_color", framebuffer_gBuffer.getTextureId(GBUFFER_COLOR), GBUFFER_COLOR);
+    GlobalGraphics::mesh_windowRect.draw();
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer_gBuffer.getFBO());
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer_view.getFBO());
+    glBlitFramebuffer(0, 0, currentWindowWidth, currentWindowHeight, 
+                        0, 0, currentWindowWidth, currentWindowHeight,
+                        GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+    framebuffer_view.bind();
+    glEnable(GL_DEPTH_TEST);
+    drawChunkInformations();
+    drawBlockSelection();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glDisable(GL_DEPTH_TEST);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
     GlobalGraphics::shader_windowRect.useProgram();
     GlobalGraphics::shader_windowRect.setUniform("texture", framebuffer_view.getTextureId(), 0);
     GlobalGraphics::mesh_windowRect.draw();
@@ -115,13 +131,13 @@ void View::drawChunks() const {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     }
 
-    shader_view.useProgram();
+    shader_gBuffer.useProgram();
 
     for (const auto &i: chunkLoader.getChunkList()) {
         Vec3 pos = Vec3(i.first) * CHUNK_WIDTH;
         glm::mat4 modelMat = glm::mat4(1.0f);
         modelMat = glm::translate(modelMat, pos.toGlmVec3());
-        shader_view.setUniform("modelMat", modelMat);
+        shader_gBuffer.setUniform("modelMat", modelMat);
         i.second->draw();
     }
 
@@ -171,13 +187,16 @@ void View::drawPlayer() const {
 
     glm::mat4 modelMat = glm::mat4(1.0f);
     modelMat = glm::translate(modelMat, player.getPos().toGlmVec3());
-    shader_view.useProgram();
-    shader_view.setUniform("modelMat", modelMat);
+    shader_gBuffer.useProgram();
+    shader_gBuffer.setUniform("modelMat", modelMat);
 
     player.draw();
 }
 
 View::~View() {
+    shader_gBuffer.release();
+    framebuffer_gBuffer.release();
+
     shader_view.release();
     framebuffer_view.release();
 

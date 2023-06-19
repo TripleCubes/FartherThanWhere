@@ -6,7 +6,7 @@
 #include <Codes/print.h>
 
 Game::Game(World &world): chunkLoader(world.chunkLoader) {
-    settings.loadDistance = 6;
+    settings.loadDistance = 4;
 }
 
 void Game::update() {

@@ -18,7 +18,7 @@ private:
     bool wireframeMode = false;
     bool collisionEnabled = false;
     bool flying = true;
-    int loadDistance = 6;
+    int loadDistance = 4;
     bool showingChunkInformations = false;
 };
 

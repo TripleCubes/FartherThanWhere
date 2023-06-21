@@ -4,10 +4,12 @@
 #include <Codes/world.h>
 #include <Codes/game.h>
 #include <Codes/input.h>
+#include <Codes/random.h>
 #include <Codes/Time/time.h>
 #include <Codes/UI/ui.h>
 
 #include <Codes/GraphicEffects/boxBlur.h>
+#include <Codes/GraphicEffects/ssao.h>
 
 #include <Codes/print.h>
 
@@ -82,12 +84,14 @@ int main() {
     initOpenGl();
 
     {
+        Random::init();
         Input::init();
         UI::init();
 
         GlobalGraphics::init();
 
         GraphicEffects::BoxBlur::init();
+        GraphicEffects::SSAO::init();
 
         World world;
         Game game(world);
@@ -109,6 +113,7 @@ int main() {
             Time::update();
         }
 
+        GraphicEffects::SSAO::release();
         GraphicEffects::BoxBlur::release();
 
         GlobalGraphics::release();

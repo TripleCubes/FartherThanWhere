@@ -13,6 +13,8 @@ public:
     int getLoadDistance() const;
     bool isShowingChunkInformations() const;
 
+    bool isSSAOEnabled() const;
+
 private:
     bool thirdPersonView = false;
     bool wireframeMode = false;
@@ -20,6 +22,8 @@ private:
     bool flying = true;
     int loadDistance = 4;
     bool showingChunkInformations = false;
+
+    bool ssaoEnabled = false;
 };
 
 #endif

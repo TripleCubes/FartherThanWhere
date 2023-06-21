@@ -12,17 +12,17 @@ Framebuffer GraphicEffects::BoxBlur::framebuffer_horizontalBlurred;
 Framebuffer GraphicEffects::BoxBlur::framebuffer_blurred;
 
 void GraphicEffects::BoxBlur::init() {
-    shader_blur.init("Shaders/Effects/boxBlur");
+    shader_blur.init("Shaders/GraphicEffects/boxBlur");
 
     framebuffer_horizontalBlurred.init();
     framebuffer_blurred.init();
 }
 
-void GraphicEffects::BoxBlur::createBlurTexture(Texture inputTexture, int blurPixelRange, int blurTimes) {
-    createBlurTexture(inputTexture.getTextureId(), blurPixelRange, blurTimes);
+void GraphicEffects::BoxBlur::createTexture(Texture inputTexture, int blurPixelRange, int blurTimes) {
+    createTexture(inputTexture.getTextureId(), blurPixelRange, blurTimes);
 }
 
-void GraphicEffects::BoxBlur::createBlurTexture(unsigned int inputTextureId, int blurPixelRange, int blurTimes) {
+void GraphicEffects::BoxBlur::createTexture(unsigned int inputTextureId, int blurPixelRange, int blurTimes) {
     shader_blur.useProgram();
     shader_blur.setUniform("blurSize", blurPixelRange);
     createBlurTexture1Time(inputTextureId);
@@ -37,7 +37,6 @@ void GraphicEffects::BoxBlur::createBlurTexture1Time(unsigned int inputTextureId
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glDisable(GL_DEPTH_TEST);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     shader_blur.useProgram();
     shader_blur.setUniform("horizontal", true);
@@ -48,14 +47,13 @@ void GraphicEffects::BoxBlur::createBlurTexture1Time(unsigned int inputTextureId
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glDisable(GL_DEPTH_TEST);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     shader_blur.setUniform("horizontal", false);
     shader_blur.setUniform("texture", framebuffer_horizontalBlurred.getTextureId(), 0);
     GlobalGraphics::mesh_windowRect.draw();
 }
 
-unsigned int GraphicEffects::BoxBlur::getBlurredTexture() {
+unsigned int GraphicEffects::BoxBlur::getTextureId() {
     return framebuffer_blurred.getTextureId();
 }
 

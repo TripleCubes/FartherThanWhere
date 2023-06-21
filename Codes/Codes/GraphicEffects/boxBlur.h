@@ -11,9 +11,9 @@ namespace GraphicEffects {
     public:
         static void init();
 
-        static void createBlurTexture(unsigned int inputTextureId, int blurPixelRange, int blurTimes);
-        static void createBlurTexture(Texture inputTexture, int blurPixelRange, int blurTimes);
-        static unsigned int getBlurredTexture();
+        static void createTexture(unsigned int inputTextureId, int blurPixelRange, int blurTimes);
+        static void createTexture(Texture inputTexture, int blurPixelRange, int blurTimes);
+        static unsigned int getTextureId();
 
         static void release();
 

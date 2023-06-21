@@ -62,6 +62,10 @@ void Controls::updateSettings() {
     if (Input::justPressed("B")) {
         settings.showingChunkInformations = !settings.showingChunkInformations;
     }
+
+    if (Input::justPressed("V")) {
+        settings.ssaoEnabled = !settings.ssaoEnabled;
+    }
 }
 
 void Controls::updateCameraDir() {

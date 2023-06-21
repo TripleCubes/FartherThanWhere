@@ -23,3 +23,7 @@ int Settings::getLoadDistance() const {
 bool Settings::isShowingChunkInformations() const {
     return showingChunkInformations;
 }
+
+bool Settings::isSSAOEnabled() const {
+    return ssaoEnabled;
+}

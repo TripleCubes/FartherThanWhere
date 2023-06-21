@@ -14,6 +14,7 @@
 
 //
 #include <Codes/GraphicEffects/boxBlur.h>
+#include <Codes/GraphicEffects/ssao.h>
 
 extern int currentWindowWidth;
 extern int currentWindowHeight;
@@ -97,14 +98,28 @@ void View::draw() const {
     drawChunks();
     drawPlayer();
 
+    if (settings.isSSAOEnabled()) {
+        GraphicEffects::SSAO::createTexture(framebuffer_gBuffer.getTextureId(GBUFFER_POS),
+                                            framebuffer_gBuffer.getTextureId(GBUFFER_NORMAL),
+                                            projectionMat,
+                                            viewMat);
+        GraphicEffects::BoxBlur::createTexture(GraphicEffects::SSAO::getTextureId(), 5, 3);
+    }
+
     framebuffer_view.bind();
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glDisable(GL_DEPTH_TEST);
     shader_view.useProgram();
-    shader_view.setUniform("gBuffer_pos", framebuffer_gBuffer.getTextureId(GBUFFER_POS), GBUFFER_POS);
-    shader_view.setUniform("gBuffer_normal", framebuffer_gBuffer.getTextureId(GBUFFER_NORMAL), GBUFFER_NORMAL);
-    shader_view.setUniform("gBuffer_color", framebuffer_gBuffer.getTextureId(GBUFFER_COLOR), GBUFFER_COLOR);
+    shader_view.setUniform("gBuffer_pos", framebuffer_gBuffer.getTextureId(GBUFFER_POS), 0);
+    shader_view.setUniform("gBuffer_normal", framebuffer_gBuffer.getTextureId(GBUFFER_NORMAL), 1);
+    shader_view.setUniform("gBuffer_color", framebuffer_gBuffer.getTextureId(GBUFFER_COLOR), 2);
+    if (settings.isSSAOEnabled()) {
+        shader_view.setUniform("ssaoEnabled", true);
+        shader_view.setUniform("texture_ssao", GraphicEffects::BoxBlur::getTextureId(), 3);
+    } else {
+        shader_view.setUniform("ssaoEnabled", false);
+    }
     GlobalGraphics::mesh_windowRect.draw();
     glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer_gBuffer.getFBO());
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer_view.getFBO());

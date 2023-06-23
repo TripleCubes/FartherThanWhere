@@ -36,7 +36,7 @@ void UI::init() {
 
 void UI::draw() {
     drawTexture(currentWindowWidth/2, currentWindowHeight/2, 
-                texture_crosshair.getWidth(), texture_crosshair.getHeight(), 
+                texture_crosshair.getTextureWidth(), texture_crosshair.getTextureHeight(), 
                 texture_crosshair, true);
 }
 
@@ -84,9 +84,9 @@ void UI::drawTexture(float x, float y, float w, float h, const Texture &texture,
     }
     
     if (h == 0) {
-        h = (float)texture.getHeight() / (float)texture.getWidth() * w;
+        h = (float)texture.getTextureHeight() / (float)texture.getTextureWidth() * w;
     } else if (w == 0) {
-        w = (float)texture.getWidth() / (float)texture.getHeight() * h;
+        w = (float)texture.getTextureWidth() / (float)texture.getTextureHeight() * h;
     }
 
     y = currentWindowHeight - y;

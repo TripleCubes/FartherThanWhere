@@ -11,7 +11,7 @@ public:
 
     struct Result {
         bool found = false;
-        bool selectedType = false;
+        int selectedType = 0;
         IntPos selectedPos;
 
         bool hasPlacingPos = false;

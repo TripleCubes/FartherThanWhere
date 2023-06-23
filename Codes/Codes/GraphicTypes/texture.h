@@ -9,15 +9,15 @@ public:
     
     void init(const std::string &path);
     unsigned int getTextureId() const;
-    int getWidth() const;
-    int getHeight() const;
+    int getTextureWidth() const;
+    int getTextureHeight() const;
     void release();
 
     Texture(const Texture&) = delete;
     Texture &operator = (const Texture&) = delete;
     
-private:
-    int width, height, numberOfColorChannels;
+protected:
+    int textureWidth, textureHeight, numberOfColorChannels;
     unsigned int textureId;
     bool initialized = false;
     bool released = false;

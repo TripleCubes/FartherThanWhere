@@ -179,7 +179,7 @@ void Shader::setUniform(const std::string &uniformName, bool b) const {
     glUniform1i(glGetUniformLocation(shaderId, uniformName.c_str()), b);
 }
 
-void Shader::setUniform(const std::string &uniformName, const Texture &texture, int textureUniformIndex) const {
+void Shader::setUniform(const std::string &uniformName, const Texture &texture, int textureUniformIndex, bool arrayTexture) const {
     if (!initialized) {
         PRINTLN("cant set texture uniform of uninitialized shader");
         return;
@@ -188,10 +188,10 @@ void Shader::setUniform(const std::string &uniformName, const Texture &texture, 
         PRINTLN("cant set texture uniform of released shader");
         return;
     }
-    setUniform(uniformName, texture.getTextureId(), textureUniformIndex);
+    setUniform(uniformName, texture.getTextureId(), textureUniformIndex, arrayTexture);
 }
 
-void Shader::setUniform(const std::string &uniformName, unsigned int textureId, int textureUniformIndex) const {
+void Shader::setUniform(const std::string &uniformName, unsigned int textureId, int textureUniformIndex, bool arrayTexture) const {
     if (!initialized) {
         PRINTLN("cant set texture uniform of uninitialized shader");
         return;
@@ -202,7 +202,7 @@ void Shader::setUniform(const std::string &uniformName, unsigned int textureId, 
     }
     glUniform1i(glGetUniformLocation(shaderId, uniformName.c_str()), textureUniformIndex);
     glActiveTexture(GL_TEXTURE0 + textureUniformIndex);
-    glBindTexture(GL_TEXTURE_2D, textureId);
+    glBindTexture(arrayTexture? GL_TEXTURE_2D_ARRAY : GL_TEXTURE_2D, textureId);
 }
 
 void Shader::release() {

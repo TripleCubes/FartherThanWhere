@@ -11,7 +11,7 @@ void Texture::init(const std::string &path) {
         return;
     }
 
-    unsigned char *textureData = stbi_load(path.c_str(), &width, &height, &numberOfColorChannels, 0);
+    unsigned char *textureData = stbi_load(path.c_str(), &textureWidth, &textureHeight, &numberOfColorChannels, 0);
     if (!textureData) {
         PRINT("failed to load texture");
         PRINTLN(path);
@@ -27,7 +27,7 @@ void Texture::init(const std::string &path) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData);
 
     glBindTexture(GL_TEXTURE_2D, 0);
     stbi_image_free(textureData);
@@ -47,7 +47,7 @@ unsigned int Texture::getTextureId() const {
     return textureId;
 }
 
-int Texture::getWidth() const {
+int Texture::getTextureWidth() const {
     if (!initialized) {
         PRINTLN("cant getWidth of uninitialized texture");
         return 0;
@@ -56,10 +56,10 @@ int Texture::getWidth() const {
         PRINTLN("cant getWidth of released texture");
         return 0;
     }
-    return width;
+    return textureWidth;
 }
 
-int Texture::getHeight() const {
+int Texture::getTextureHeight() const {
     if (!initialized) {
         PRINTLN("cant getHeight of uninitialized texture");
         return 0;
@@ -68,7 +68,7 @@ int Texture::getHeight() const {
         PRINTLN("cant getHeight of released texture");
         return 0;
     }
-    return height;
+    return textureHeight;
 }
 
 void Texture::release() {

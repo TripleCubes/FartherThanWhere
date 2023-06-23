@@ -22,8 +22,8 @@ public:
 
     const std::unordered_map<IntPos, std::unique_ptr<Chunk>, IntPosHash> &getChunkList() const;
 
-    bool getBlock(IntPos blockPos) const;
-    void placeBlock(IntPos blockPos);
+    int getBlock(IntPos blockPos) const;
+    void placeBlock(IntPos blockPos, int blockType);
     void breakBlock(IntPos blockPos);
 
     struct ChunkLoadRequest {

@@ -4,6 +4,8 @@
 #include <Codes/print.h>
 #include <Codes/Types/vec3.h>
 #include <Codes/Chunk/chunkLoader.h>
+#include <Codes/Textures/blockTextures.h>
+#include <Codes/Globals/globalFunctions.hpp>
 
 Chunk::Chunk() {}
 
@@ -31,22 +33,27 @@ IntPos Chunk::indexToPos(int index) {
     return pos;
 }
 
-void Chunk::placeBlock(IntPos pos) {
-    blocks[posToIndex(pos)] = true;
+void Chunk::placeBlock(IntPos pos, int blockType) {
+    blocks[posToIndex(pos)] = blockType;
     meshUpdateRequested = true;
 }
 
 void Chunk::breakBlock(IntPos pos) {
-    blocks[posToIndex(pos)] = false;
+    blocks[posToIndex(pos)] = BLOCKTYPE_EMPTY;
     meshUpdateRequested = true;
 }
 
-bool Chunk::getBlock(IntPos pos) const {
+int Chunk::getBlock(IntPos pos) const {
     return blocks[posToIndex(pos)];
 }
 
 void Chunk::createFaceList(std::array<bool, CHUNK_VOLUME*6> &faceList, 
                             const std::array<Chunk*, 6> &sideChunks) const {
+    std::vector<int> transparentBlockList = {
+        BLOCKTYPE_EMPTY,
+        BLOCKTYPE_LEAF,
+    };
+
     std::array<IntPos, 6> dirs = {
         IntPos( 0,  1,  0), // TOP
         IntPos( 0, -1,  0), // BOTTOM
@@ -88,7 +95,7 @@ void Chunk::createFaceList(std::array<bool, CHUNK_VOLUME*6> &faceList,
         }
     };
 
-    const auto getSideChunkBlock = [&sideChunks](IntPos blockPos, int faceDir) -> bool {
+    const auto getSideChunkBlock = [&sideChunks](IntPos blockPos, int faceDir) -> int {
         switch (faceDir) {
         case 0: // TOP
             return sideChunks[0]->getBlock(IntPos(blockPos.x, 0, blockPos.z));
@@ -115,7 +122,7 @@ void Chunk::createFaceList(std::array<bool, CHUNK_VOLUME*6> &faceList,
             break;
         
         default:
-            return false;
+            return BLOCKTYPE_EMPTY;
             break;
         }
     };
@@ -131,11 +138,11 @@ void Chunk::createFaceList(std::array<bool, CHUNK_VOLUME*6> &faceList,
         IntPos blockPos = indexToPos(blockIndex);
         for (int faceDir = 0; faceDir < 6; faceDir++) {
             if (!isEdgeFace(blockPos, faceDir)) {
-                if (!getBlock(blockPos + dirs[faceDir])) {
+                if (findInList<int>(transparentBlockList, getBlock(blockPos + dirs[faceDir])) != -1) {
                     faceList[getFaceIndex(blockIndex, faceDir)] = true;
                 }
             } else {
-                if (!getSideChunkBlock(blockPos, faceDir)) {
+                if (findInList<int>(transparentBlockList, getSideChunkBlock(blockPos, faceDir)) != -1) {
                     faceList[getFaceIndex(blockIndex, faceDir)] = true;
                 }
             }
@@ -147,6 +154,10 @@ void Chunk::createSurfaceList(std::vector<Surface> &surfaceList,
                                 std::array<bool, CHUNK_VOLUME*6> &faceList) const {
     const auto getFaceIndex = [](int blockIndex, int faceDir) -> int {
         return blockIndex + faceDir * CHUNK_VOLUME;
+    };
+
+    const auto getBlockIndex = [](int faceIndex) -> int {
+        return faceIndex % CHUNK_VOLUME;
     };
 
     const auto getCheckX = [](IntPos blockPos, int faceDir) -> int {
@@ -296,6 +307,7 @@ void Chunk::createSurfaceList(std::vector<Surface> &surfaceList,
             }
 
             IntPos blockPos = indexToPos(blockIndex);
+            int blockType = blocks[blockIndex];
             int surfaceW = 1;
             int surfaceH = 1;
             int checkStartX = getCheckX(blockPos, faceDir);
@@ -305,7 +317,8 @@ void Chunk::createSurfaceList(std::vector<Surface> &surfaceList,
             int checkingIndex = right(faceIndex, faceDir);
             while (checkStartX + surfaceW < CHUNK_WIDTH
                     && faceList[checkingIndex] 
-                    && !faceCheckedList[checkingIndex]) {
+                    && !faceCheckedList[checkingIndex]
+                    && blocks[getBlockIndex(checkingIndex)] == blockType) {
                 surfaceW++;
                 faceCheckedList[checkingIndex] = true;
                 checkingIndex = right(checkingIndex, faceDir);
@@ -319,7 +332,8 @@ void Chunk::createSurfaceList(std::vector<Surface> &surfaceList,
 
                 int checkingIndex = checkingIndex_y;
                 for (int i = 0; i < surfaceW; i++) {
-                    if (!faceList[checkingIndex] || faceCheckedList[checkingIndex]) {
+                    if (!faceList[checkingIndex] || faceCheckedList[checkingIndex]
+                        || blocks[getBlockIndex(checkingIndex)] != blockType) {
                         while (checkingIndex != checkingIndex_y) {
                             checkingIndex = left(checkingIndex, faceDir);
                             faceCheckedList[checkingIndex] = false;
@@ -336,6 +350,7 @@ void Chunk::createSurfaceList(std::vector<Surface> &surfaceList,
             stopYCheck:
 
             Chunk::Surface surface;
+            surface.textureIndex = GameTextures::BlockTextures::getTextureIndex(blockType, faceDir);
             surface.blockPos = blockPos;
             surface.faceDir = faceDir;
             surface.w = surfaceW;
@@ -352,83 +367,84 @@ void Chunk::createVerticies(std::vector<float> &verticies,
         Vec3 pos(surface.blockPos);
         float w = surface.w;
         float h = surface.h;
+        float index = surface.textureIndex;
 
         switch (surface.faceDir) {
         case 0:
             surfaceVerticies = {
-//              Pos                         Normal      UV
-                pos.x  , pos.y+1, pos.z  ,  0,  1,  0,  0,  1, // A TOP
-                pos.x+w, pos.y+1, pos.z+h,  0,  1,  0,  1,  0, // C
-                pos.x  , pos.y+1, pos.z+h,  0,  1,  0,  0,  0, // D
+//              Pos                         Normal      UV      TextureIndex
+                pos.x  , pos.y+1, pos.z  ,  0,  1,  0,  0,  0,  index,  // A TOP
+                pos.x+w, pos.y+1, pos.z+h,  0,  1,  0,  w,  h,  index,  // C
+                pos.x  , pos.y+1, pos.z+h,  0,  1,  0,  0,  h,  index,  // D
 
-                pos.x  , pos.y+1, pos.z  ,  0,  1,  0,  0,  1, // A
-                pos.x+w, pos.y+1, pos.z  ,  0,  1,  0,  1,  1, // B
-                pos.x+w, pos.y+1, pos.z+h,  0,  1,  0,  1,  0, // C
+                pos.x  , pos.y+1, pos.z  ,  0,  1,  0,  0,  0,  index,  // A
+                pos.x+w, pos.y+1, pos.z  ,  0,  1,  0,  w,  0,  index,  // B
+                pos.x+w, pos.y+1, pos.z+h,  0,  1,  0,  w,  h,  index,  // C
             };
             break;
         
         case 1:
             surfaceVerticies = {
-//              Pos                         Normal      UV
-                pos.x  , pos.y  , pos.z  ,  0, -1,  0,  1,  1, // E BOTTOM
-                pos.x  , pos.y  , pos.z+h,  0, -1,  0,  1,  0, // H
-                pos.x+w, pos.y  , pos.z+h,  0, -1,  0,  0,  0, // G
+//              Pos                         Normal      UV      TextureIndex
+                pos.x  , pos.y  , pos.z  ,  0, -1,  0,  0,  h,  index,  // E BOTTOM
+                pos.x  , pos.y  , pos.z+h,  0, -1,  0,  0,  0,  index,  // H
+                pos.x+w, pos.y  , pos.z+h,  0, -1,  0,  w,  0,  index,  // G
 
-                pos.x  , pos.y  , pos.z  ,  0, -1,  0,  1,  1, // E
-                pos.x+w, pos.y  , pos.z+h,  0, -1,  0,  0,  0, // G
-                pos.x+w, pos.y  , pos.z  ,  0, -1,  0,  0,  1, // F
+                pos.x  , pos.y  , pos.z  ,  0, -1,  0,  0,  h,  index,  // E
+                pos.x+w, pos.y  , pos.z+h,  0, -1,  0,  w,  0,  index,  // G
+                pos.x+w, pos.y  , pos.z  ,  0, -1,  0,  w,  h,  index,  // F
             };
             break;
 
         case 2:
             surfaceVerticies = {
-//              Pos                         Normal      UV
-                pos.x  , pos.y+h, pos.z  , -1,  0,  0,  0,  1, // A LEFT
-                pos.x  , pos.y+h, pos.z+w, -1,  0,  0,  1,  1, // D
-                pos.x  , pos.y  , pos.z+w, -1,  0,  0,  1,  0, // H
+//              Pos                         Normal      UV      TextureIndex
+                pos.x  , pos.y+h, pos.z  , -1,  0,  0,  0,  0,  index,  // A LEFT
+                pos.x  , pos.y+h, pos.z+w, -1,  0,  0,  w,  0,  index,  // D
+                pos.x  , pos.y  , pos.z+w, -1,  0,  0,  w,  h,  index,  // H
 
-                pos.x  , pos.y+h, pos.z  , -1,  0,  0,  0,  1, // A
-                pos.x  , pos.y  , pos.z+w, -1,  0,  0,  1,  0, // H
-                pos.x  , pos.y  , pos.z  , -1,  0,  0,  0,  0, // E
+                pos.x  , pos.y+h, pos.z  , -1,  0,  0,  0,  0,  index,  // A
+                pos.x  , pos.y  , pos.z+w, -1,  0,  0,  w,  h,  index,  // H
+                pos.x  , pos.y  , pos.z  , -1,  0,  0,  0,  h,  index,  // E
             };
             break;
 
         case 3:
             surfaceVerticies = {
-//              Pos                         Normal      UV
-                pos.x+1, pos.y+h, pos.z  ,  1,  0,  0,  1,  1, // B RIGHT
-                pos.x+1, pos.y  , pos.z+w,  1,  0,  0,  0,  0, // G
-                pos.x+1, pos.y+h, pos.z+w,  1,  0,  0,  0,  1, // C
+//              Pos                         Normal      UV      TextureIndex
+                pos.x+1, pos.y+h, pos.z  ,  1,  0,  0,  w,  0,  index,  // B RIGHT
+                pos.x+1, pos.y  , pos.z+w,  1,  0,  0,  0,  h,  index,  // G
+                pos.x+1, pos.y+h, pos.z+w,  1,  0,  0,  0,  0,  index,  // C
 
-                pos.x+1, pos.y+h, pos.z  ,  1,  0,  0,  1,  1, // B
-                pos.x+1, pos.y  , pos.z  ,  1,  0,  0,  1,  0, // F
-                pos.x+1, pos.y  , pos.z+w,  1,  0,  0,  0,  0, // G
+                pos.x+1, pos.y+h, pos.z  ,  1,  0,  0,  w,  0,  index,  // B
+                pos.x+1, pos.y  , pos.z  ,  1,  0,  0,  w,  h,  index,  // F
+                pos.x+1, pos.y  , pos.z+w,  1,  0,  0,  0,  h,  index,  // G
             };
             break;
 
         case 4:
             surfaceVerticies = {
-//              Pos                         Normal      UV
-                pos.x  , pos.y+h, pos.z+1,  0,  0,  1,  0,  1, // D FORWARD
-                pos.x+w, pos.y+h, pos.z+1,  0,  0,  1,  1,  1, // C
-                pos.x  , pos.y  , pos.z+1,  0,  0,  1,  0,  0, // H
+//              Pos                         Normal      UV      TextureIndex
+                pos.x  , pos.y+h, pos.z+1,  0,  0,  1,  0,  0,  index,  // D FORWARD
+                pos.x+w, pos.y+h, pos.z+1,  0,  0,  1,  w,  0,  index,  // C
+                pos.x  , pos.y  , pos.z+1,  0,  0,  1,  0,  h,  index,  // H
 
-                pos.x+w, pos.y+h, pos.z+1,  0,  0,  1,  1,  1, // C
-                pos.x+w, pos.y  , pos.z+1,  0,  0,  1,  1,  0, // G
-                pos.x  , pos.y  , pos.z+1,  0,  0,  1,  0,  0, // H
+                pos.x+w, pos.y+h, pos.z+1,  0,  0,  1,  w,  0,  index,  // C
+                pos.x+w, pos.y  , pos.z+1,  0,  0,  1,  w,  h,  index,  // G
+                pos.x  , pos.y  , pos.z+1,  0,  0,  1,  0,  h,  index,  // H
             };
             break;
 
         case 5:
             surfaceVerticies = {
-//              Pos                         Normal      UV
-                pos.x  , pos.y+h, pos.z  ,  0,  0, -1,  1,  1, // A BACKWARD
-                pos.x  , pos.y  , pos.z  ,  0,  0, -1,  1,  0, // E
-                pos.x+w, pos.y+h, pos.z  ,  0,  0, -1,  0,  1, // B
+//              Pos                         Normal      UV      TextureIndex
+                pos.x  , pos.y+h, pos.z  ,  0,  0, -1,  w,  0,  index,  // A BACKWARD
+                pos.x  , pos.y  , pos.z  ,  0,  0, -1,  w,  h,  index,  // E
+                pos.x+w, pos.y+h, pos.z  ,  0,  0, -1,  0,  0,  index,  // B
 
-                pos.x+w, pos.y+h, pos.z  ,  0,  0, -1,  0,  1, // B
-                pos.x  , pos.y  , pos.z  ,  0,  0, -1,  1,  0, // E
-                pos.x+w, pos.y  , pos.z  ,  0,  0, -1,  0,  0, // F
+                pos.x+w, pos.y+h, pos.z  ,  0,  0, -1,  0,  0,  index,  // B
+                pos.x  , pos.y  , pos.z  ,  0,  0, -1,  w,  h,  index,  // E
+                pos.x+w, pos.y  , pos.z  ,  0,  0, -1,  0,  h,  index,  // F
             };
             break;
         
@@ -450,7 +466,7 @@ void Chunk::updateMesh(const std::array<Chunk*, 6> &sideChunks) {
     std::vector<float> verticies;
     createVerticies(verticies, surfaceList);
     
-    mesh.set3d(verticies);
+    mesh.set3dLayers(verticies);
     chunkReady = true;
     meshUpdateRequested = false;
 }

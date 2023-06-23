@@ -49,7 +49,7 @@ const std::unordered_map<IntPos, std::unique_ptr<Chunk>, IntPosHash> &ChunkLoade
     return chunks;
 }
 
-bool ChunkLoader::getBlock(IntPos blockPos) const {
+int ChunkLoader::getBlock(IntPos blockPos) const {
     IntPos chunkPos = blockPos.getChunkPos();
     if (chunkLoaded(chunkPos)) {
         return chunks.at(chunkPos)->getBlock(blockPos.getBlockPosInChunk());
@@ -68,13 +68,13 @@ void ChunkLoader::breakBlock(IntPos blockPos) {
     requestUpdateSideChunkMeshes(chunkPos);
 }
 
-void ChunkLoader::placeBlock(IntPos blockPos) {
+void ChunkLoader::placeBlock(IntPos blockPos, int blockType) {
     IntPos chunkPos = blockPos.getChunkPos();
     if (!chunkLoaded(chunkPos)) {
         return;
     }
 
-    chunks.at(chunkPos)->placeBlock(blockPos.getBlockPosInChunk());
+    chunks.at(chunkPos)->placeBlock(blockPos.getBlockPosInChunk(), blockType);
 
     requestUpdateSideChunkMeshes(chunkPos);
 }

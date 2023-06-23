@@ -122,6 +122,50 @@ void Mesh::set3d(const std::vector<float> &verticies, const std::vector<unsigned
     glDeleteBuffers(1, &VBO);
 }
 
+void Mesh::set3dLayers(const std::vector<float> &verticies) {
+    if (released) {
+        PRINTLN("cant set released mesh");
+        return;
+    }
+
+    this->drawLine = false;
+    
+    if (VAOInitialized) {
+        glDeleteVertexArrays(1, &VAO);
+    } else {
+        VAOInitialized = true;
+    }
+
+    if (EBOInitialized) {
+        glDeleteBuffers(1, &EBO);
+        EBOInitialized = false;
+    }
+
+    numberOfVerticies = verticies.size() / 9;
+
+    unsigned int VBO;
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glBindVertexArray(VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, verticies.size() * sizeof(float), &verticies[0], GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void *)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void *)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void *)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void *)(8 * sizeof(float)));
+    glEnableVertexAttribArray(3);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    glDeleteBuffers(1, &VBO);
+}
+
 void Mesh::set2d(const std::vector<float> &verticies, bool drawLine) {
     if (released) {
         PRINTLN("cant set released mesh");

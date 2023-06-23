@@ -11,6 +11,8 @@
 #include <Codes/GraphicEffects/boxBlur.h>
 #include <Codes/GraphicEffects/ssao.h>
 
+#include <Codes/Textures/blockTextures.h>
+
 #include <Codes/print.h>
 
 extern GLFWwindow *glfwWindow;
@@ -93,6 +95,8 @@ int main() {
         GraphicEffects::BoxBlur::init();
         GraphicEffects::SSAO::init();
 
+        GameTextures::BlockTextures::init();
+
         World world;
         Game game(world);
 
@@ -112,6 +116,8 @@ int main() {
             Time::syncFrame();
             Time::update();
         }
+
+        GameTextures::BlockTextures::release();
 
         GraphicEffects::SSAO::release();
         GraphicEffects::BoxBlur::release();

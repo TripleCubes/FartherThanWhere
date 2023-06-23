@@ -24,8 +24,8 @@ public:
     void setUniform(const std::string &uniformName, Color color) const;
     void setUniform(const std::string &uniformName, int num) const;
     void setUniform(const std::string &uniformName, bool b) const;
-    void setUniform(const std::string &uniformName, const Texture &texture, int textureUniformIndex) const;
-    void setUniform(const std::string &uniformName, unsigned int textureId, int textureUniformIndex) const;
+    void setUniform(const std::string &uniformName, const Texture &texture, int textureUniformIndex, bool arrayTexture = false) const;
+    void setUniform(const std::string &uniformName, unsigned int textureId, int textureUniformIndex, bool arrayTexture = false) const;
     void release();
 
     Shader(const Shader&) = delete;

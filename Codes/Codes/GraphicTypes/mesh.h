@@ -14,8 +14,10 @@ public:
 
     void set3d(const std::vector<float> &verticies, bool drawLine = false);
     void set3d(const std::vector<float> &verticies, const std::vector<unsigned int> &indicies, bool drawLine = false);
+    void set3dLayers(const std::vector<float> &verticies);
     void set2d(const std::vector<float> &verticies, bool drawLine = false);
     void set2d(const std::vector<float> &verticies, const std::vector<unsigned int> &indicies, bool drawLine = false);
+
     void draw() const;
 
     void release();

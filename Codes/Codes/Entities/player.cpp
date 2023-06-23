@@ -262,7 +262,7 @@ void Player::moveAxis(float moveAmount, Axis axis) {
     };
 
     for (Vec3 collisionCheckPos: collisionCheckPosList) {
-        if (chunkLoader.getBlock(IntPos(collisionCheckPos))) {
+        if (chunkLoader.getBlock(IntPos(collisionCheckPos)) != BLOCKTYPE_EMPTY) {
             collisionSnap();
 
             if (axis == Axis::Y && moveAmount < 0) {

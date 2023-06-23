@@ -34,6 +34,7 @@ private:
 
     Framebuffer framebuffer_gBuffer;
     static Shader shader_gBuffer;
+    static Shader shader_gBufferLayers;
 
     static Shader shader_view;
     Framebuffer framebuffer_view;

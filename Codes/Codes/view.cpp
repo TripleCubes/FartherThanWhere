@@ -8,6 +8,7 @@
 #include <Codes/Types/vec3.h>
 #include <Codes/Types/color.h>
 #include <Codes/Raycast/blockRaycast.h>
+#include <Codes/Textures/blockTextures.h>
 
 #include <glad/glad.h>
 #include <Codes/print.h>
@@ -25,6 +26,7 @@ namespace GlobalGraphics {
 }
 
 Shader View::shader_gBuffer;
+Shader View::shader_gBufferLayers;
 Shader View::shader_view;
 Shader View::shader_boxFrame;
 Mesh View::mesh_boxFrame;
@@ -32,6 +34,7 @@ Mesh View::mesh_boxFrame;
 View::View(const Settings &settings, const Camera &camera, const ChunkLoader &chunkLoader, const Player &player): 
 settings(settings), camera(camera), chunkLoader(chunkLoader), player(player) {
     shader_gBuffer.init("Shaders/View/gBuffer");
+    shader_gBufferLayers.init("Shaders/View/gBufferLayers");
     framebuffer_gBuffer.init(0, 0, 3);
 
     shader_view.init("Shaders/View/view");
@@ -86,6 +89,10 @@ void View::draw() const {
     shader_gBuffer.useProgram();
     shader_gBuffer.setUniform("projectionMat", projectionMat);
     shader_gBuffer.setUniform("viewMat", viewMat);
+
+    shader_gBufferLayers.useProgram();
+    shader_gBufferLayers.setUniform("projectionMat", projectionMat);
+    shader_gBufferLayers.setUniform("viewMat", viewMat);
 
     shader_boxFrame.useProgram();
     shader_boxFrame.setUniform("projectionMat", projectionMat);
@@ -146,13 +153,14 @@ void View::drawChunks() const {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     }
 
-    shader_gBuffer.useProgram();
+    shader_gBufferLayers.useProgram();
+    shader_gBufferLayers.setUniform("texture", GameTextures::BlockTextures::getBlocksTextureId(), 0, true);
 
     for (const auto &i: chunkLoader.getChunkList()) {
         Vec3 pos = Vec3(i.first) * CHUNK_WIDTH;
         glm::mat4 modelMat = glm::mat4(1.0f);
         modelMat = glm::translate(modelMat, pos.toGlmVec3());
-        shader_gBuffer.setUniform("modelMat", modelMat);
+        shader_gBufferLayers.setUniform("modelMat", modelMat);
         i.second->draw();
     }
 
@@ -210,6 +218,7 @@ void View::drawPlayer() const {
 
 View::~View() {
     shader_gBuffer.release();
+    shader_gBufferLayers.release();
     framebuffer_gBuffer.release();
 
     shader_view.release();

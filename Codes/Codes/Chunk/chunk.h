@@ -7,6 +7,9 @@
 #include <Codes/Types/vec2.h>
 #include <Codes/Types/intPos.h>
 
+//
+#include <Codes/Chunk/block.h>
+
 const int CHUNK_WIDTH = 16;
 const int CHUNK_VOLUME = CHUNK_WIDTH*CHUNK_WIDTH*CHUNK_WIDTH;
 
@@ -16,9 +19,9 @@ class Chunk {
 public:
     Chunk();
 
-    void placeBlock(IntPos pos);
+    void placeBlock(IntPos pos, int blockType);
     void breakBlock(IntPos pos);
-    bool getBlock(IntPos pos) const;
+    int getBlock(IntPos pos) const;
 
     void updateMesh(const std::array<Chunk*, 6> &sideChunks);
     bool isMeshUpdateRequested() const;
@@ -28,7 +31,7 @@ public:
     ~Chunk();
     
 private:
-    std::array<bool, CHUNK_VOLUME> blocks = {};
+    std::array<int, CHUNK_VOLUME> blocks = {};
     Mesh mesh;
     bool chunkReady = false;
     bool meshUpdateRequested = true;
@@ -39,6 +42,7 @@ private:
     void createFaceList(std::array<bool, CHUNK_VOLUME*6> &faceList, 
                             const std::array<Chunk*, 6> &sideChunks) const;
     struct Surface {
+        int textureIndex;
         Vec2 uv;
         int w = 0;
         int h = 0;

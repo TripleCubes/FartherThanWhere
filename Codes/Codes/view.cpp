@@ -196,7 +196,11 @@ void View::drawBlockSelection() const {
     shader_boxFrame.setUniform("modelMat", modelMat);
     shader_boxFrame.setUniform("boxSize", Vec3(1, 1, 1));
     shader_boxFrame.setUniform("boxMargin", Vec3(0, 0, 0));
-    shader_boxFrame.setUniform("frameColor", Color(0, 0, 0, 1));
+    if (settings.isWireframeMode()) {
+        shader_boxFrame.setUniform("frameColor", Color(1, 1, 1, 1));
+    } else {
+        shader_boxFrame.setUniform("frameColor", Color(0, 0, 0, 1));
+    }
 
     glLineWidth(2);
     mesh_boxFrame.draw();

@@ -1,7 +1,7 @@
 #include <Codes/Time/intervals.h>
 
 #include <Codes/Time/time.h>
-#include <Codes/print.h>
+#include <Codes/Debug/print.h>
 
 void Intervals::updateIntervals() {
     for (Interval &interval: intervalList) {

@@ -1,6 +1,6 @@
 #ifdef DEBUG
 
-#include <Codes/print.h>
+#include <Codes/Debug/print.h>
 
 #include <iostream>
 #include <Codes/Types/vec2.h>

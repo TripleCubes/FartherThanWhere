@@ -1,6 +1,6 @@
 #include <Codes/Types/vec3.h>
 
-#include <Codes/print.h>
+#include <Codes/Debug/print.h>
 #include <Codes/Types/intPos.h>
 #include <cmath>
 #include <glm/gtx/rotate_vector.hpp>

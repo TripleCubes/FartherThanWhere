@@ -8,7 +8,7 @@
 #include <Codes/Raycast/blockRaycast.h>
 #include <Codes/Chunk/chunkLoader.h>
 #include <Codes/Entities/player.h>
-#include <Codes/print.h>
+#include <Codes/Debug/print.h>
 #include <GLFW/glfw3.h>
 
 extern GLFWwindow *glfwWindow;

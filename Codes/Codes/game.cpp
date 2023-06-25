@@ -3,7 +3,7 @@
 #include <Codes/world.h>
 #include <Codes/Chunk/chunkLoader.h>
 #include <Codes/Types/intPos.h>
-#include <Codes/print.h>
+#include <Codes/Debug/print.h>
 
 Game::Game(World &world): chunkLoader(world.chunkLoader) {
     settings.loadDistance = 4;

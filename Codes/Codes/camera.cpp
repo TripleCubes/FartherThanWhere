@@ -1,7 +1,7 @@
 #include <Codes/camera.h>
 
 #include <Codes/Entities/player.h>
-#include <Codes/print.h>
+#include <Codes/Debug/print.h>
 
 Camera::Camera(const ChunkLoader &chunkLoader, const Player &player): 
 chunkLoader(chunkLoader), player(player) {

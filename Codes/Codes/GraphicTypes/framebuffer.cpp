@@ -1,7 +1,7 @@
 #include <Codes/GraphicTypes/framebuffer.h>
 
 #include <glad/glad.h>
-#include <Codes/print.h>
+#include <Codes/Debug/print.h>
 
 extern int currentWindowWidth;
 extern int currentWindowHeight;

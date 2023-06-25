@@ -13,7 +13,7 @@
 
 #include <Codes/Textures/blockTextures.h>
 
-#include <Codes/print.h>
+#include <Codes/Debug/print.h>
 
 extern GLFWwindow *glfwWindow;
 extern int currentWindowWidth;

@@ -1,7 +1,7 @@
 #include <Codes/input.h>
 
 #include <GLFW/glfw3.h>
-#include <Codes/print.h>
+#include <Codes/Debug/print.h>
 
 extern GLFWwindow *glfwWindow;
 

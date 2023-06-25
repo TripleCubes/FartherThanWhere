@@ -5,7 +5,7 @@
 #include <Codes/Time/time.h>
 #include <vector>
 #include <cmath>
-#include <Codes/print.h>
+#include <Codes/Debug/print.h>
 
 Mesh Player::mesh;
 

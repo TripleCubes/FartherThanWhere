@@ -1,7 +1,7 @@
 #include <Codes/Chunk/chunkLoader.h>
 
 #include <cmath>
-#include <Codes/print.h>
+#include <Codes/Debug/print.h>
 
 std::size_t IntPosHash::operator () (const IntPos &pos) const {
     std::size_t hash1 = std::hash<int>{}(pos.x);

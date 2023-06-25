@@ -11,7 +11,7 @@
 #include <Codes/Textures/blockTextures.h>
 
 #include <glad/glad.h>
-#include <Codes/print.h>
+#include <Codes/Debug/print.h>
 
 //
 #include <Codes/GraphicEffects/boxBlur.h>

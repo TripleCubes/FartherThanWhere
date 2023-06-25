@@ -1,7 +1,7 @@
 #include <Codes/GraphicTypes/mesh.h>
 
 #include <glad/glad.h>
-#include <Codes/print.h>
+#include <Codes/Debug/print.h>
 
 Mesh::Mesh() {}
 

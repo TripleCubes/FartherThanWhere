@@ -2,7 +2,7 @@
 
 #include <Codes/Types/vec3.h>
 #include <Codes/Chunk/chunkLoader.h>
-#include <Codes/print.h>
+#include <Codes/Debug/print.h>
 #include <cmath>
 
 bool isMin(float num1, float num2, float num3)

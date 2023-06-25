@@ -3,7 +3,7 @@
 #include <Codes/Types/vec2.h>
 #include <Codes/Types/color.h>
 
-#include <Codes/print.h>
+#include <Codes/Debug/print.h>
 
 extern int currentWindowWidth;
 extern int currentWindowHeight;

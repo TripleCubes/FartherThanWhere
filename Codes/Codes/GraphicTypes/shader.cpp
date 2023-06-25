@@ -1,6 +1,6 @@
 #include <Codes/GraphicTypes/shader.h>
 
-#include <Codes/print.h>
+#include <Codes/Debug/print.h>
 #include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>
 

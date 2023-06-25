@@ -1,7 +1,7 @@
 #include <Codes/Chunk/chunk.h>
 
 #include <vector>
-#include <Codes/print.h>
+#include <Codes/Debug/print.h>
 #include <Codes/Types/vec3.h>
 #include <Codes/Chunk/chunkLoader.h>
 #include <Codes/Textures/blockTextures.h>

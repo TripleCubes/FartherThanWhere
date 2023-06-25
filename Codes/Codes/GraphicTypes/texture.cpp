@@ -2,7 +2,7 @@
 
 #include <glad/glad.h>
 #include <stb_image.h>
-#include <Codes/print.h>
+#include <Codes/Debug/print.h>
 
 Texture::Texture() {}
 

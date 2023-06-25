@@ -6,7 +6,7 @@
 Mesh::Mesh() {}
 
 void Mesh::init3d(const std::vector<float> &verticies, bool drawLine) {
-    if (VAOInitialized) {
+    if (initialized) {
         return;
     }
 
@@ -14,7 +14,7 @@ void Mesh::init3d(const std::vector<float> &verticies, bool drawLine) {
 }
 
 void Mesh::init3d(const std::vector<float> &verticies, const std::vector<unsigned int> &indicies, bool drawLine) {
-    if (VAOInitialized) {
+    if (initialized) {
         return;
     }
 
@@ -22,7 +22,7 @@ void Mesh::init3d(const std::vector<float> &verticies, const std::vector<unsigne
 }
 
 void Mesh::init2d(const std::vector<float> &verticies, bool drawLine) {
-    if (VAOInitialized) {
+    if (initialized) {
         return;
     }
 
@@ -30,7 +30,7 @@ void Mesh::init2d(const std::vector<float> &verticies, bool drawLine) {
 }
 
 void Mesh::init2d(const std::vector<float> &verticies, const std::vector<unsigned int> &indicies, bool drawLine) {
-    if (VAOInitialized) {
+    if (initialized) {
         return;
     }
 
@@ -43,12 +43,33 @@ void Mesh::set3d(const std::vector<float> &verticies, bool drawLine) {
         return;
     }
 
+    if (verticies.size() == 0) {
+        if (VAOInitialized) {
+            glDeleteVertexArrays(1, &VAO);
+            VAOInitialized = false;
+        }
+        if (EBOInitialized) {
+            glDeleteBuffers(1, &EBO);
+            EBOInitialized = false;
+        }
+
+        emptyMesh = true;
+        initialized = true;
+        return;
+    }
+
     this->drawLine = drawLine;
     
     if (VAOInitialized) {
         glDeleteVertexArrays(1, &VAO);
     } else {
         VAOInitialized = true;
+    }
+
+    if (VBOInitialized) {
+        glDeleteBuffers(1, &VBO);
+    } else {
+        VBOInitialized = true;
     }
 
     if (EBOInitialized) {
@@ -73,15 +94,28 @@ void Mesh::set3d(const std::vector<float> &verticies, bool drawLine) {
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
 
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
-    glDeleteBuffers(1, &VBO);
+    emptyMesh = false;
+    initialized = true;
 }
 
 void Mesh::set3d(const std::vector<float> &verticies, const std::vector<unsigned int> &indicies, bool drawLine) {
     if (released) {
         PRINTLN("cant set released mesh");
+        return;
+    }
+
+    if (verticies.size() == 0) {
+        if (VAOInitialized) {
+            glDeleteVertexArrays(1, &VAO);
+            VAOInitialized = false;
+        }
+        if (EBOInitialized) {
+            glDeleteBuffers(1, &EBO);
+            EBOInitialized = false;
+        }
+
+        emptyMesh = true;
+        initialized = true;
         return;
     }
 
@@ -91,6 +125,12 @@ void Mesh::set3d(const std::vector<float> &verticies, const std::vector<unsigned
         glDeleteVertexArrays(1, &VAO);
     } else {
         VAOInitialized = true;
+    }
+
+    if (VBOInitialized) {
+        glDeleteBuffers(1, &VBO);
+    } else {
+        VBOInitialized = true;
     }
 
     if (EBOInitialized) {
@@ -116,15 +156,28 @@ void Mesh::set3d(const std::vector<float> &verticies, const std::vector<unsigned
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(0);
 
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
-    glDeleteBuffers(1, &VBO);
+    emptyMesh = false;
+    initialized = true;
 }
 
 void Mesh::set3dLayers(const std::vector<float> &verticies) {
     if (released) {
         PRINTLN("cant set released mesh");
+        return;
+    }
+
+    if (verticies.size() == 0) {
+        if (VAOInitialized) {
+            glDeleteVertexArrays(1, &VAO);
+            VAOInitialized = false;
+        }
+        if (EBOInitialized) {
+            glDeleteBuffers(1, &EBO);
+            EBOInitialized = false;
+        }
+
+        emptyMesh = true;
+        initialized = true;
         return;
     }
 
@@ -134,6 +187,12 @@ void Mesh::set3dLayers(const std::vector<float> &verticies) {
         glDeleteVertexArrays(1, &VAO);
     } else {
         VAOInitialized = true;
+    }
+
+    if (VBOInitialized) {
+        glDeleteBuffers(1, &VBO);
+    } else {
+        VBOInitialized = true;
     }
 
     if (EBOInitialized) {
@@ -160,15 +219,28 @@ void Mesh::set3dLayers(const std::vector<float> &verticies) {
     glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void *)(8 * sizeof(float)));
     glEnableVertexAttribArray(3);
 
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
-    glDeleteBuffers(1, &VBO);
+    emptyMesh = false;
+    initialized = true;
 }
 
 void Mesh::set2d(const std::vector<float> &verticies, bool drawLine) {
     if (released) {
         PRINTLN("cant set released mesh");
+        return;
+    }
+
+    if (verticies.size() == 0) {
+        if (VAOInitialized) {
+            glDeleteVertexArrays(1, &VAO);
+            VAOInitialized = false;
+        }
+        if (EBOInitialized) {
+            glDeleteBuffers(1, &EBO);
+            EBOInitialized = false;
+        }
+
+        emptyMesh = true;
+        initialized = true;
         return;
     }
 
@@ -178,6 +250,12 @@ void Mesh::set2d(const std::vector<float> &verticies, bool drawLine) {
         glDeleteVertexArrays(1, &VAO);
     } else {
         VAOInitialized = true;
+    }
+
+    if (VBOInitialized) {
+        glDeleteBuffers(1, &VBO);
+    } else {
+        VBOInitialized = true;
     }
 
     if (EBOInitialized) {
@@ -198,15 +276,28 @@ void Mesh::set2d(const std::vector<float> &verticies, bool drawLine) {
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(0);
 
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
-    glDeleteBuffers(1, &VBO);
+    emptyMesh = false;
+    initialized = true;
 }
 
 void Mesh::set2d(const std::vector<float> &verticies, const std::vector<unsigned int> &indicies, bool drawLine) {
     if (released) {
         PRINTLN("cant set released mesh");
+        return;
+    }
+
+    if (verticies.size() == 0) {
+        if (VAOInitialized) {
+            glDeleteVertexArrays(1, &VAO);
+            VAOInitialized = false;
+        }
+        if (EBOInitialized) {
+            glDeleteBuffers(1, &EBO);
+            EBOInitialized = false;
+        }
+
+        emptyMesh = true;
+        initialized = true;
         return;
     }
 
@@ -216,6 +307,12 @@ void Mesh::set2d(const std::vector<float> &verticies, const std::vector<unsigned
         glDeleteVertexArrays(1, &VAO);
     } else {
         VAOInitialized = true;
+    }
+
+    if (VBOInitialized) {
+        glDeleteBuffers(1, &VBO);
+    } else {
+        VBOInitialized = true;
     }
 
     if (EBOInitialized) {
@@ -241,19 +338,21 @@ void Mesh::set2d(const std::vector<float> &verticies, const std::vector<unsigned
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(0);
 
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
-    glDeleteBuffers(1, &VBO);
+    emptyMesh = false;
+    initialized = true;
 }
 
 void Mesh::draw() const {
-    if (!VAOInitialized) {
+    if (!initialized) {
         PRINTLN("cant draw uninitialized mesh");
         return;
     }
     if (released) {
         PRINTLN("cant draw released mesh");
+        return;
+    }
+
+    if (emptyMesh) {
         return;
     }
 
@@ -270,12 +369,17 @@ void Mesh::release() {
         return;
     }
 
-    if (!VAOInitialized) {
+    if (!initialized) {
         PRINTLN("cant release uninitialized mesh");
         return;
     }
 
-    glDeleteVertexArrays(1, &VAO);
+    if (VAOInitialized) {
+        glDeleteVertexArrays(1, &VAO);
+    }
+    if (VBOInitialized) {
+        glDeleteBuffers(1, &VBO);
+    }
     if (EBOInitialized) {
         glDeleteBuffers(1, &EBO);
     }

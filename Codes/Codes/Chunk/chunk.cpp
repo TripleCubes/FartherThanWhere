@@ -467,6 +467,7 @@ void Chunk::updateMesh(const std::array<Chunk*, 6> &sideChunks) {
     createVerticies(verticies, surfaceList);
     
     mesh.set3dLayers(verticies);
+
     chunkReady = true;
     meshUpdateRequested = false;
 }

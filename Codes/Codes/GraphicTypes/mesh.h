@@ -27,12 +27,16 @@ public:
     
 private:
     unsigned int VAO;
+    unsigned int VBO;
     unsigned int EBO;
+    bool initialized = false;
     bool VAOInitialized = false;
+    bool VBOInitialized = false;
     bool EBOInitialized = false;
     int numberOfVerticies = 0;
     int numberOfIndicies = 0;
     bool drawLine = false;
+    bool emptyMesh = true;
     bool released = false;
 };
 

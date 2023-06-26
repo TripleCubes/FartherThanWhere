@@ -136,7 +136,7 @@ void Controls::placeBreakBlock() {
     if (Input::justPressed(MouseButton::RIGHT)) {
         const BlockRaycast::Result &blockRaycastResult = camera.getBlockRaycastResult();
         if (blockRaycastResult.hasPlacingPos) {
-            chunkLoader.placeBlock(blockRaycastResult.placingPos, BLOCKTYPE_LEAF);
+            chunkLoader.placeBlock(blockRaycastResult.placingPos, BLOCKTYPE_GLASS);
         }
     }
 }

@@ -44,6 +44,10 @@ int GameTextures::BlockTextures::getTextureIndex(int blockType, int faceDir) {
     case BLOCKTYPE_LEAF:
         return 6;
         break;
+
+    case BLOCKTYPE_GLASS:
+        return 7;
+        break;
     
     default:
         return 0;

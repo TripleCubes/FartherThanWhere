@@ -7,5 +7,6 @@ const int BLOCKTYPE_DIRT = 2;
 const int BLOCKTYPE_GRASS = 3;
 const int BLOCKTYPE_LOG = 4;
 const int BLOCKTYPE_LEAF = 5;
+const int BLOCKTYPE_GLASS = 6;
 
 #endif

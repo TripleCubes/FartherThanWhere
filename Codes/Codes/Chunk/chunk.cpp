@@ -52,6 +52,7 @@ void Chunk::createFaceList(std::array<bool, CHUNK_VOLUME*6> &faceList,
     std::vector<int> transparentBlockList = {
         BLOCKTYPE_EMPTY,
         BLOCKTYPE_LEAF,
+        BLOCKTYPE_GLASS,
     };
 
     std::array<IntPos, 6> dirs = {

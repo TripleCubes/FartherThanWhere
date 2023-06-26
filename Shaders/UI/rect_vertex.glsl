@@ -9,7 +9,7 @@ uniform vec2 rectSize;
 uniform vec2 windowSize;
 
 void main() {
-    fragment_textureCoords = vertex_pos;
+    fragment_textureCoords = vec2(vertex_pos.x, 1-vertex_pos.y);
     
     vec2 resultPos = vec2(rectPos.x/windowSize.x + vertex_pos.x*rectSize.x/windowSize.x,
                             rectPos.y/windowSize.y + vertex_pos.y*rectSize.y/windowSize.y);

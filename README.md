@@ -43,3 +43,10 @@ The license file is located at [_Libs/GLM/copying.txt](_Libs/GLM/copying.txt)
 Public Domain [www.unlicense.org](www.unlicense.org)
 
 The license file is located at [_Libs/Stb_image/LICENSE](_Libs/Stb_image/LICENSE)
+
+## Barlow Semi Condensed font
+SIL OPEN FONT LICENSE Version 1.1 - 26 February 2007
+
+Copyright 2017 The Barlow Project Authors (https://github.com/jpt/barlow)
+
+The license file is located at [Fonts\Barlow_Semi_Condensed\OFL.txt](Fonts\Barlow_Semi_Condensed\OFL.txt)

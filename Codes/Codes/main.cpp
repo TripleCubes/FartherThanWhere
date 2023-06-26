@@ -7,6 +7,7 @@
 #include <Codes/random.h>
 #include <Codes/Time/time.h>
 #include <Codes/UI/ui.h>
+#include <Codes/Graphics/text.h>
 
 #include <Codes/GraphicEffects/boxBlur.h>
 #include <Codes/GraphicEffects/ssao.h>
@@ -58,7 +59,7 @@ void initOpenGl() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    glfwWindow = glfwCreateWindow(800, 500, "Farther than where", NULL, NULL);
+    glfwWindow = glfwCreateWindow(1000, 600, "Farther than where", NULL, NULL);
     if (glfwWindow == NULL) {
         PRINTLN("failed to create window");
         glfwTerminate();
@@ -71,7 +72,7 @@ void initOpenGl() {
         return;
     }
 
-    glViewport(0, 0, 800, 500);
+    glViewport(0, 0, 1000, 600);
 
     glfwSetCursorPosCallback(glfwWindow, onMouseMove);
 
@@ -89,6 +90,7 @@ int main() {
         Random::init();
         Input::init();
         UI::init();
+        Text::init();
 
         GlobalGraphics::init();
 
@@ -123,6 +125,8 @@ int main() {
         GraphicEffects::BoxBlur::release();
 
         GlobalGraphics::release();
+
+        Text::release();
 
         UI::release();
     }

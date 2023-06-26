@@ -1,6 +1,5 @@
 #include <Codes/UI/ui.h>
 
-#include <Codes/Types/vec2.h>
 #include <Codes/Types/color.h>
 
 #include <Codes/Debug/print.h>

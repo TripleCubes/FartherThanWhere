@@ -11,7 +11,7 @@ void ArrayTexture::init(const std::string &path, int layerWidth, int layerHeight
 
     unsigned char *textureData = stbi_load(path.c_str(), &textureWidth, &textureHeight, &numberOfColorChannels, 0);
     if (!textureData) {
-        PRINT("failed to load texture");
+        PRINT("ArrayTexture::init(): failed to load texture");
         PRINTLN(path);
 
         return;
@@ -22,6 +22,10 @@ void ArrayTexture::init(const std::string &path, int layerWidth, int layerHeight
     int layerCountX = textureWidth / layerWidth;
     int layerCountY = textureHeight / layerHeight;
     this->layerCount = layerCountX * layerCountY;
+    if (layerCount > 256) {
+        PRINTLN("ArrayTexture::init(): layerCount > 256");
+        return;
+    }
 
     glGenTextures(1, &textureId);
     glBindTexture(GL_TEXTURE_2D_ARRAY, textureId);

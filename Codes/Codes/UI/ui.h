@@ -4,10 +4,11 @@
 #include <Codes/GraphicTypes/texture.h>
 #include <Codes/GraphicTypes/mesh.h>
 #include <Codes/GraphicTypes/shader.h>
-#include <Codes/Types/color.h>
 #include <Codes/Types/vec2.h>
 #include <Codes/Graphics/text.h>
 #include <string>
+
+class Color;
 
 class UI {
 public:

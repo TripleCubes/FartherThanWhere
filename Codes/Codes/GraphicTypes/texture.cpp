@@ -13,7 +13,7 @@ void Texture::init(const std::string &path) {
 
     unsigned char *textureData = stbi_load(path.c_str(), &textureWidth, &textureHeight, &numberOfColorChannels, 0);
     if (!textureData) {
-        PRINT("failed to load texture");
+        PRINT("Texture::init(): failed to load texture");
         PRINTLN(path);
 
         return;

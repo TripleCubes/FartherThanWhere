@@ -19,7 +19,7 @@
 extern GLFWwindow *glfwWindow;
 extern int currentWindowWidth;
 extern int currentWindowHeight;
-extern bool mouseLock;
+extern bool mouseLocked;
 
 namespace GlobalGraphics {
     void init();
@@ -31,7 +31,7 @@ float lastMousePosY = 0;
 bool resetMouseMoveOffset = true;
 
 void onMouseMove(double mousex, double mousey) {
-    if (!mouseLock) {
+    if (!mouseLocked) {
         resetMouseMoveOffset = true;
         return;
     }
@@ -110,6 +110,7 @@ int main() {
 
             game.update();
             world.update();
+            UI::update();
             
             game.draw();
             UI::draw();
@@ -131,6 +132,7 @@ int main() {
         UI::release();
     }
 
+    glfwTerminate();
     PRINTLN("Game closed successfully");
 
     return 0;

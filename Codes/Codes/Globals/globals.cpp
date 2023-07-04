@@ -3,4 +3,4 @@
 GLFWwindow *glfwWindow;
 int currentWindowWidth = 1000;
 int currentWindowHeight = 600;
-bool mouseLock = true;
+bool mouseLocked = true;

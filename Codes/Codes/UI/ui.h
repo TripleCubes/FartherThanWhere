@@ -6,7 +6,9 @@
 #include <Codes/GraphicTypes/shader.h>
 #include <Codes/Types/vec2.h>
 #include <Codes/Graphics/text.h>
+#include <Codes/UI/Menu/menu.h>
 #include <string>
+#include <memory>
 
 class Color;
 
@@ -14,6 +16,7 @@ class UI {
 public:
     static void init();
 
+    static void update();
     static void draw();
 
     static void drawRectPos(float x1, float y1, float x2, float y2, Color color);
@@ -23,8 +26,8 @@ public:
                             unsigned int textureId, int textureWidth, int textureHeight, 
                             bool centered = false);
 
-    static Vec2 getTextBoxSize(std::string &text);
-    static void drawTextBox(float x, float y, std::string &text, Color color);
+    static Vec2 getTextBoxSize(const std::string &text);
+    static void drawTextBox(float x, float y, const std::string &text, Color color);
     static void drawTextBox(float x, float y, const char *text, Color color);
 
     static void release();
@@ -43,6 +46,11 @@ private:
     static void drawTexture(bool isTextTexture, float x, float y, float w, float h, 
                             unsigned int textureId, int textureWidth, int textureHeight, 
                             Color textColor, bool centered);
+
+
+
+    static std::shared_ptr<Menu> rootMenu;
+    static void initMenus();
 };
 
 #endif

@@ -1,6 +1,8 @@
 #include <Codes/UI/ui.h>
 
 #include <Codes/Types/color.h>
+#include <Codes/UI/Menu/menuManager.h>
+#include <Codes/input.h>
 
 #include <Codes/Debug/print.h>
 
@@ -11,6 +13,8 @@ Mesh UI::mesh_rect;
 Shader UI::shader_rect;
 
 Texture UI::texture_crosshair;
+
+std::shared_ptr<Menu> UI::rootMenu = std::make_shared<Menu>("Root");
 
 void UI::init() {
     std::vector<float> rectVerticies = {
@@ -31,6 +35,35 @@ void UI::init() {
 
 
     texture_crosshair.init("Textures/UI/crosshair.png");
+
+
+
+    initMenus();
+}
+
+void UI::initMenus() {
+    rootMenu->addSelfSharedPtr(rootMenu);
+
+    rootMenu->addSubMenu("Pause");
+
+    rootMenu->getSubMenu("Pause")->addSubMenu("Settings");
+    rootMenu->getSubMenu("Pause")->getSubMenu("Settings")->addSubMenu("SubSub1");
+    rootMenu->getSubMenu("Pause")->getSubMenu("Settings")->addSubMenu("SubSub2");
+
+    rootMenu->getSubMenu("Pause")->addSubMenu("Settings 2");
+    rootMenu->getSubMenu("Pause")->addSubMenu("Settings 3");
+}
+
+void UI::update() {
+    MenuManager::update();
+
+    if (Input::justPressed("ESC")) {
+        if (MenuManager::isAllMenusClosed()) {
+            rootMenu->getSubMenu("Pause")->open();
+        } else {
+            MenuManager::goBackOneMenu();
+        }
+    }
 }
 
 void UI::draw() {
@@ -38,7 +71,7 @@ void UI::draw() {
                 texture_crosshair.getTextureWidth(), texture_crosshair.getTextureHeight(), 
                 texture_crosshair, true);
 
-    drawTextBox(10, 10, "This is a test ggggg", Color(1, 0.65, 0.57, 0.5));
+    MenuManager::draw();
 }
 
 void UI::drawRectPos(float x1, float y1, float x2, float y2, Color color) {
@@ -121,7 +154,7 @@ void UI::drawTexture(bool isTextTexture, float x, float y, float w, float h,
     mesh_rect.draw();
 }
 
-Vec2 UI::getTextBoxSize(std::string &text) {
+Vec2 UI::getTextBoxSize(const std::string &text) {
     Vec2 result;
 
     for (std::size_t i = 0; i < text.size(); i++)
@@ -133,7 +166,7 @@ Vec2 UI::getTextBoxSize(std::string &text) {
     return result;
 }
 
-void UI::drawTextBox(float x, float y, std::string &text, Color color) {
+void UI::drawTextBox(float x, float y, const std::string &text, Color color) {
     int cursorX = x;
     int cursorY = y;
     for (std::size_t i = 0; i < text.size(); i++)

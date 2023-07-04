@@ -8,18 +8,18 @@
 #include <Codes/Raycast/blockRaycast.h>
 #include <Codes/Chunk/chunkLoader.h>
 #include <Codes/Entities/player.h>
-#include <Codes/Debug/print.h>
-#include <GLFW/glfw3.h>
+#include <Codes/UI/Menu/menuManager.h>
 
-extern GLFWwindow *glfwWindow;
-extern int currentWindowWidth;
-extern int currentWindowHeight;
-extern bool mouseLock;
+#include <Codes/Debug/print.h>
 
 Controls::Controls(Settings &settings, Camera &camera, ChunkLoader &chunkLoader, Player &player): 
 settings(settings), camera(camera), chunkLoader(chunkLoader), player(player) {}
 
 void Controls::update() {
+    if (!MenuManager::isAllMenusClosed()) {
+        return;
+    }
+
     updateSettings();
     updateCameraDir();
     updateMovements();
@@ -49,16 +49,6 @@ void Controls::updateSettings() {
         }
     }
 
-    if (Input::justPressed("ESC")) {
-        mouseLock = !mouseLock;
-        if (mouseLock) {
-            glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-        } else {
-            glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-            glfwSetCursorPos(glfwWindow, (double)currentWindowWidth/2, (double)currentWindowHeight/2);
-        }
-    }
-
     if (Input::justPressed("B")) {
         settings.showingChunkInformations = !settings.showingChunkInformations;
     }
@@ -69,10 +59,6 @@ void Controls::updateSettings() {
 }
 
 void Controls::updateCameraDir() {
-    if (!mouseLock) {
-        return;
-    }
-
     Vec2 mouseMoveOffset = Input::getMouseMoveOffset();
 
     cameraRotationX -= mouseMoveOffset.y * 0.17;
